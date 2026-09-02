@@ -1,0 +1,36 @@
+.image {
+  width: 450px;
+  height: auto;
+  object-fit: contain;
+}
+.gifs {
+  width: 500px;
+  height: auto;
+  object-fit: contain;
+}
+.part-1 {
+    width: 100vh;
+    height: auto;
+    padding: 5px;
+}
+.part-2 {
+    width: 100vh;
+    height: auto;
+    padding: 5px;
+}
+.part-3 {
+    width: 100vh;
+    height: auto;
+    padding: 5px;
+}
+
+.side-by-side-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+body {
+    padding: 10px;
+}
