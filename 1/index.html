@@ -5,6 +5,283 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>WORK IN PROGRESS</h1>
+    <h1>Project 1: Colorizing Images</h1>
+    <h2>Image pre-processing</h2>
+    <p>Before doing the single-scale or multi-scale pyramid alignment, my program has to process the images to prepare them for the alignment. The images are in a photostrip-like format, so the program will split the single photo into 3 separate images that each represent one of the RGB color channels. I also converted them into numpy float arrays.</p>
+    <h2>Metric</h2>
+    <p>The metric I used to identify the best alignment was the L2 norm. I chose to use the L2 norm instead of the NCC because numpy already has a built-in function to calculate the L2 norm of an array. Therefore, I think that this would improve my efficiency. I used numpy’s built-in function np.linalg.norm() to calculate the L2 norm of the difference between the two images.<br/>
+    The offset with the best alignment will have the smallest L2 norm, since the L2 norm of the difference between two image vectors is a measure of the distance between them. A larger distance means that the images are less similar.</p>
+    <h2>Single-Scale Alignment</h2>
+    <p>For the smaller images that were provided in the dataset, such as ‘cathedral.jpg’, ‘tobolsk.jpg’ and ‘monastery.jpg’, I could use single-scale alignment. This is because the images are small enough that the program can efficiently search an offset range that is large enough to find the correct alignment.</p>
+    <h3>Additional Cropping</h3>
+    <p>All the images are surrounded by black borders which weren’t important to image alignment as they weren’t part of the actual picture. However, these borders were sometimes uneven between the 3 color channel images and would likely cause distortion in my algorithm’s alignment metric calculations. Therefore, I set a parameter, which I called “offset”, to 30 pixels. This offset would be the amount the image would be cropped on both sides of the height and width. I decided to use 30 pixels because the widest border of the 3 smaller images was around 20 pixels, and I thought it would be good to add a 10 pixel buffer to account for additional noise near the sides of the image. The offset can be wider than the border because based on the glass plate images provided, the most important pixels for the alignment are in the more central parts of the image.
+    <br/>Below is an example of the noise near the border I’m referring to (in cathedral.jpg):</p>
+    <img class="proj1-image" src="media/noise_example.png"/>
+    <h3>Best alignment</h3>
+    <p>I found the best alignment offset by looping through different combinations of pixel offsets in the height and width of the image. The combinations of offsets were within the range (-30, 30) for both the height and width. For each offset, the algorithm will:</p>
+    <ol>
+        <li>Use np.roll() to shift the red or green image in both the i and j directions</li>
+        <li>Find the L2 norm of the difference between the blue and the shifted red or green image</li>
+        <li>Check if the new L2 norm is lower than the “current” lowest L2 norm.</li>
+        <li>If it is, then it will update the “current” lowest L2 norm and alignment offset to the newly identified one.</li>
+    </ol>
+    <h3>Results!</h3>
+    <p>Here is a gallery showing the results of my single-scale alignment function!</p>
+    <div class="image-gallery">
+        <div class="img-holder">
+            <h4>Cathedral</h4>
+            <img class="proj1-image" src="media/out_cathedral_single.jpg"/>
+            <div>
+                <p>Original Image: cathedral.jpg<br/>
+                    Red Channel Displacement Vector: (12, 3)<br/>
+                    Green Channel Displacement Vector: (5, 2)</p>
+            </div>
+        </div>
+        <div class="img-holder">
+            <h4>Monastery</h4>
+            <img class="proj1-image" src="media/out_monastery_single.jpg"/>
+            <p>Original Image: monastery.jpg<br/>
+                    Red Channel Displacement Vector: (3, 2)<br/>
+                    Green Channel Displacement Vector: (-3, 2)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Tobolsk</h4>
+            <img class="proj1-image" src="media/out_tobolsk_single.jpg"/>
+            <p>Original Image: tobolsk.jpg<br/>
+                    Red Channel Displacement Vector: (6, 3)<br/>
+                    Green Channel Displacement Vector: (3, 3)</p>
+        </div>
+    </div>
+    <br/>
+
+    <h2>Multi-Scale Pyramid Alignment</h2>
+    <p>For the larger images with the file type ‘tif’, I could not use my single-scale alignment algorithm. The images had too many pixels that searching through a range of (-30, 30) pixels would be too inefficient. Therefore, I needed to use image pyramids to align the images.</p>
+    <h3>Additional Cropping</h3>
+    <p>The cropping will need to be done in all the recursive calls, as even the downsized images will have the black border. However, since the image sizes are decreasing due to the image pyramid, I needed to make the cropping dynamic. A smaller image will need a smaller pixel cropping offset than a larger image with more pixels. I decided on this cropping offset to be 10% of the image’s height and width by finding the percentage of the single-scale alignment cropping offset = 30/390 * 100% = ~7% and rounding up to the nearest 10% to add an additional pixel buffer for noise near the border. Cropping an additional 3% would also improve efficiency without affecting alignment, as there are less pixels and therefore less values when calculating the L2 norm.</p>
+    <h3>Image Pyramids for Best Alignment</h3>
+    <p>The best alignment offset was determined using image pyramids. I used recursion to make recursive calls that will downsample the image until it was to a size that in which a (-17, 17) range search would be effective to find an approximate alignment offset.</p>
+    <h4>Base Case</h4>
+    <p>If the image height is <= 300 pixels, the function will crop the image using the cropping offset and find the alignment offset that will create the best alignment (lowest L2 norm) within a (-17, 17) search range. The base case uses the same concept as my single-scale alignment algorithm, but with a smaller range. The single-scale alignment offsets ranged from -3 to 12, so a (-17, 17) range is likely large enough to capture the alignment offsets for images <= 300 pixels.</p>
+    <h4>Recursive call</h4>
+    <p>If the image height is >300 pixels, the function will downsample the images by a factor of 0.5 then make a recursive call using the new downsampled images which will return the offset that will create the best alignment. Afterwards, it will use this alignment offset (multiplied by 2 to scale the pixels to the original image) as a base offset to refine the alignment on the non-downsampled image using the same method as in the base case.</p>
+    <h4>Rationale behind the values</h4>
+    <p>Initially, I thought I should make the base case <= 400 pixels and the search range (-20, 20) because the smaller images were around 390 pixels tall and my single-scale alignment algorithm was able to efficiently process them in a short amount of time. I decreased the search range to (-20, 20) because the alignment offset range for the single-align images of around 400 pixels tall was around -3 to 12. However, it ended up taking around 1 minute and 20 seconds per image. Therefore, to improve efficiency, I decided I would need to further decrease the range so I tried (-17, 17). To account for the smaller search range, I also decreased the base case parameter from 400 to 300 pixels.</p>
+    <h3>Results!</h3>
+    <p>Using my algorithm, 13/14 of the provided images were properly aligned. Some photos have what appears to be misalignment in only certain areas, but I believe that it is likely due to slight motion that occurred in between 
+        <br/>Below is a gallery of the successful results of the multi-scale pyramid alignment function I created.</p>
+    <div class="image-gallery">
+        <div class="img-holder">
+            <h4>Church</h4>
+            <img class="proj1-image" src="media/out_church.jpg"/>
+            <p>Original Image: church.tif<br/>
+                    Red Channel Displacement Vector: (58, -4)<br/>
+                    Green Channel Displacement Vector: (25, 4)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Harvesters</h4>
+            <img class="proj1-image" src="media/out_harvesters.jpg"/>
+            <p>Original Image: harvesters.tif<br/>
+                    Red Channel Displacement Vector: (124,  13)<br/>
+                    Green Channel Displacement Vector: (59, 16)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Icon</h4>
+            <img class="proj1-image" src="media/out_icon.jpg"/>
+            <p>Original Image: icon.tif<br/>
+                    Red Channel Displacement Vector: (89, 23)<br/>
+                    Green Channel Displacement Vector: (41, 17)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Ilemselga</h4>
+            <img class="proj1-image" src="media/out_ilemselga.jpg"/>
+            <p>Original Image: ilemselga.tif<br/>
+                    Red Channel Displacement Vector: (130, 11)<br/>
+                    Green Channel Displacement Vector: (40, 7)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Melons</h4>
+            <img class="proj1-image" src="media/out_melons.jpg"/>
+            <p>Original Image: melons.tif<br/>
+                    Red Channel Displacement Vector: (178,  13)<br/>
+                    Green Channel Displacement Vector: (81, 10)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Religous Painting</h4>
+            <img class="proj1-image" src="media/out_religous_painting.jpg"/>
+            <p>Original Image: religous_painting.tif<br/>
+                    Red Channel Displacement Vector: (68, 7)<br/>
+                    Green Channel Displacement Vector: (27, 3)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Self-Portrait</h4>
+            <img class="proj1-image" src="media/out_self_portrait.jpg"/>
+            <p>Original Image: self_portrait.tif<br/>
+                    Red Channel Displacement Vector: (176, 37)<br/>
+                    Green Channel Displacement Vector: (78, 29)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Siren</h4>
+            <img class="proj1-image" src="media/out_siren.jpg"/>
+            <p>Original Image: siren.tif<br/>
+                    Red Channel Displacement Vector: (95, -25)<br/>
+                    Green Channel Displacement Vector: (49, -6)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Three Generations</h4>
+            <img class="proj1-image" src="media/out_three_generations.jpg"/>
+            <p>Original Image: three_generations.tif<br/>
+                    Red Channel Displacement Vector: (112,  11)<br/>
+                    Green Channel Displacement Vector: (53, 14)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Wharf</h4>
+            <img class="proj1-image" src="media/out_wharf.jpg"/>
+            <p>Original Image: wharf.tif<br/>
+                    Red Channel Displacement Vector: (82, -16)<br/>
+                    Green Channel Displacement Vector: (15, -7)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Cathedral</h4>
+            <img class="proj1-image" src="media/out_cathedral.jpg"/>
+            <p>Original Image: cathedral.jpg<br/>
+                    Red Channel Displacement Vector: (12, 3)<br/>
+                    Green Channel Displacement Vector: (5, 2)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Monastery</h4>
+            <img class="proj1-image" src="media/out_monastery.jpg"/>
+            <p>Original Image: monastery.jpg<br/>
+                    Red Channel Displacement Vector: (3, 2)<br/>
+                    Green Channel Displacement Vector: (-3, 2)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Tobolsk</h4>
+            <img class="proj1-image" src="media/out_tobolsk.jpg"/>
+            <p>Original Image: tobolsk.jpg<br/>
+                    Red Channel Displacement Vector: (6, 3)<br/>
+                    Green Channel Displacement Vector: (3, 3)</p>
+        </div>
+    </div>
+    <p>The image that failed to align properly was ‘emir.tif’. This is what my algorithm’s colorization attempt created:</p>
+    <div class="image-gallery">
+        <div class="img-holder">
+            <h4>Emir</h4>
+            <img class="proj1-image" src="media/out_emir.jpg"/>
+            <p>Original Image: emir.tif<br/>
+                Red Channel Displacement Vector: (96, -482)<br/>
+                Green Channel Displacement Vector: (49, 24)</p>
+        </div>
+    </div>
+    <p>According to the project 1 page, the color channel images of “Emir of Bukhara” (emir.tif) don’t “have the same brightness values”. This difference in brightness values caused the algorithm to identify an incorrect alignment. This is because the L2 norm metric I used measures the difference between the values of the two vectors. Therefore, if the level of brightness is different between the two images, the L2 norm metric is insufficient to accurately identify the similarity between the images. Therefore my offsets are incorrect. The Red channel displacement vector was (96, -482), which has a very large offset y-axis offset. I think that the Red image has a lower brightness to the other images, and to fix this I would need to find a way to adjust the brightness of the red channel for this image.</p>
+    <h3>Additional Images...</h3>
+    <p>I selected the following additional images from the Prokudin-Gorskii collection to test my multi-scale pyramid alignment algorithm:</p>
+    <ul>
+        <li>Lugano [<a href="https://www.loc.gov/item/2018679127/">https://www.loc.gov/item/2018679127/</a>]</li>
+        <li>V Italīi [<a href="https://www.loc.gov/item/2018679071/">https://www.loc.gov/item/2018679071/</a>]</li>
+        <li>Na ostrovie Kapri [<a href="https://www.loc.gov/item/2018679143/">https://www.loc.gov/item/2018679143/</a>]</li>
+        <li>Camel, loaded with sacks, lying in field of sacks [<a href="https://www.loc.gov/item/2018681179/">https://www.loc.gov/item/2018681179/</a>]</li>
+    </ul>
+    <p>Below is the gallery of the before and after results on the additional images. All images were properly aligned by my algorithm. [note: I uploaded the .jpg version of the originals to save memory space]</p>
+    <div class="image-gallery">
+        <div class="img-holder">
+            <h4>Lugano</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Original</b></p>
+                    <img class="proj1-before-image" src="media/lugano.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Colorized</b></p>
+                    <img class="proj1-image" src="media/out_lugano.jpg"/>
+                </div>
+            </div>
+            <p>Red Channel Displacement Vector: (120,  32)<br/>
+                Green Channel Displacement Vector: (55, 8)</p>
+        </div>
+        <div class="img-holder">
+            <h4>V Italīi </h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Original</b></p>
+                    <img class="proj1-before-image" src="media/v_italii.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Colorized</b></p>
+                    <img class="proj1-image" src="media/out_v_italii.jpg"/>
+                </div>
+            </div>
+            <p>Red Channel Displacement Vector: (76, 35)<br/>
+                    Green Channel Displacement Vector: (38, 21)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Na Ostrovie Kapri</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Original</b></p>
+                    <img class="proj1-before-image" src="media/na_ostrovie_kapri.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Colorized</b></p>
+                    <img class="proj1-image" src="media/out_na_ostrovie_kapri.jpg"/>
+                </div>
+            </div>
+            <p>Red Channel Displacement Vector: (78, -25)<br/>
+                    Green Channel Displacement Vector: (32, -16)</p>
+        </div>
+        <div class="img-holder">
+            <h4>Camel, loaded with sacks, lying in field of sacks</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Original</b></p>
+                    <img class="proj1-before-image" src="media/camels.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Colorized</b></p>
+                    <img class="proj1-image" src="media/out_camels.jpg"/>
+                </div>
+            </div>
+            <p>Red Channel Displacement Vector: (98, -19)<br/>
+                    Green Channel Displacement Vector: (46, -3)</p>
+        </div>
+    </div>
+
+    <h2>Additional Information</h2>
+    <h3>Overview & Comparison</h3>
+    <table>
+        <tr>
+            <th>Algorithm</th>
+            <th>Metric</th>
+            <th>Border Cropping Offset (height, width)</th>
+            <th>Alignment Offset Range for height and width</th>
+            <th>Downsampling</th>
+        </tr>
+        <tr>
+            <td>Single-Scale Alignment</td>
+            <td>L2 norm</td>
+            <td>(30 pixels, 30 pixels)</td>
+            <td>(-30, 30)</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td>Multi-Scale Pyramid Alignment</td>
+            <td>L2 norm</td>
+            <td>(height * 0.1 pixels, width * 0.1 pixels)</td>
+            <td>(-17, 17)</td>
+            <td>If image height > 300, downsample image by factor of 0.5</td>
+        </tr>
+    </table>
+    <h3>Saving Images</h3>
+    <p>As suggested, I saved the images as a 'jpg' in order to reduce the file size. To do this, I had to convert the image to uint8 (ubyte in skimage) before saving the image. Saving as ‘jpg’ instead of ‘tif’ will help save memory</p>
+
+    <h3>Speed & Efficiency</h3>
+    <p>For the multi-scale pyramid alignment, the overall speed of my algorithm was around 52 seconds for the images in the ‘tif’ format. I measured the time using a stopwatch.</p>
+    <h3>User Inputs</h3>
+    <p>To make it easier to run the program, I added user inputs to prompt the user to enter the following information:</p>
+    <ul>
+        <li><b>Alignment style:</b> whether the user wants to use single-scale or multi-scale pyramid alignment</li>
+        <li><b>Folder path:</b> the path of the folder that is holding all the images to colorize. This folder will also be used to store the colorized images.</li>
+        <li><b>List of image file names:</b> a list of the image file names separated by commas.</li>
+    </ul>
+
 </body>
 </html>
