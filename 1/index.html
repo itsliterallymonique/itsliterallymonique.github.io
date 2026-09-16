@@ -7,8 +7,7 @@
 <body>
     <h1>Project 1: Colorizing Images</h1>
     <h2>Metric</h2>
-    <p>The metric I used to identify the best alignment was the L2 norm. I chose to use the L2 norm instead of the NCC because numpy already has a built-in function to calculate the L2 norm of a vector (<i>np.linalg.norm()</i>). Therefore, I think that using a built-in function would improve my efficiency. 
-        <br/>The offset with the best alignment will have the smallest L2 norm, since the L2 norm of the difference between two image vectors is a measure of the distance between them. A larger distance means that the images are less similar.</p>
+    <p>The metric I used to identify the best alignment was the L2 norm. I chose to use the L2 norm instead of the NCC because numpy already has a built-in function to calculate the L2 norm of a vector (<i>np.linalg.norm()</i>). Therefore, I think that using a built-in function would improve my efficiency. The offset with the best alignment will have the smallest L2 norm, since the L2 norm of the difference between two image vectors is a measure of the distance between them. A larger distance means that the images are less similar.</p>
     <h2>Single-Scale Alignment</h2>
     <p>For the smaller images that were provided in the dataset, such as ‘cathedral.jpg’, ‘tobolsk.jpg’ and ‘monastery.jpg’, I could use single-scale alignment. This is because the images are small enough that the program can efficiently search an offset range that is large enough to find the correct alignment.</p>
     
