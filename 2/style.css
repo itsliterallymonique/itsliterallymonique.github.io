@@ -1,0 +1,59 @@
+.image-gallery {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.image {
+  width: 300px;
+  height: auto;
+  object-fit: contain;
+}
+
+.compare {
+    padding: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-holder {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid black;
+    border-style: double;
+    border-radius: 5px;
+}
+
+body {
+    font-family: Georgia;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+p {
+    text-align: center;
+}
+
+.side-by-side-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    justify-content: flex-start;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black;
+    text-align: center;
+    padding: 7px;
+}
