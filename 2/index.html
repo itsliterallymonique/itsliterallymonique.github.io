@@ -8,8 +8,8 @@
     <h1>Project 2</h1>
     <h2>Part 1</h2>
     <h2>Part 1.1</h2>
-    <p>For part 1.1, I had to create functions that would execute a convolution of an image using any filter. A convolution is where a filter or a kernel is used to go through each pixel on the image and find the sum of the dot product between the kernel and a matrix of the same size on the image centered on the given pixel. Therefore, to code a convolution, I would need to iterate through all the pixels on the image and apply the filter to it.
-        <br/> All images were converted to greyscale before applying the convolution.
+    <p>For part 1.1, I had to create functions that would execute a convolution of an image using any filter. A convolution is where a filter or a kernel is used to go through each pixel on the image and find the sum of the dot product between the kernel and a matrix of the same size on the image centered on the given pixel. Therefore, to code a convolution function, I would need to iterate through all the pixels on the image and apply the filter/kernel to it.
+        <br/> I also converted all images were converted to greyscale before applying the convolution, so a convolution only required one pass through the image.
     </p>
     <h3>Padding</h3>
     <p>For my four and two loop functions, I created padding using np.pad(). The padding for each dimension was the size of half of the kernel. This is because the convolution centers the kernel on the pixel and calculates the dot product of this. Therefore, I needed to add padding for half the kernel for the edges. Below is a drawing I made to show an example of what I'm referring to.</p> 
@@ -32,7 +32,7 @@
         <img class="image" src="media/two_loop_code.png"/>
     </div>
     <h3>Box Filter</h3>
-    <p>I used a 9x9 box filter, which is supposed to average all the values around each pixel in order to create a blur effect. I also used the built-in scipy function scipy.signal.convolve2d() to blur the image as a comparison for my two functions. Below is the original image of myself with the after results using my two functions and the built-in scipy function:</p>
+    <p>I used a 9x9 box filter, which is supposed to average all the values around each pixel in order to create a blur effect. I also used the built-in scipy function <b>scipy.signal.convolve2d()</b> to apply my box filter to the image as a comparison for my two functions. Below is the original image of myself with the after results using my two functions and the built-in scipy function:</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Original Image</h4>
@@ -55,9 +55,9 @@
             <p>Filter: 9x9 box filter</p>
         </div>
     </div>
-    <p>For scipy.signal.convolve2d() the parameters I used were: boundary='fill', mode='same', fillvalue=0. This was because my four loop and two loop functions used zero-padding, therefore for consistency and comparison I made sure the built-in function also used zero-padding.</p>
+    <p>For <b>scipy.signal.convolve2d()</b> the parameters I used were: boundary='fill', mode='same', fillvalue=0. This was because my four loop and two loop functions used zero-padding, therefore for consistency and comparison I made sure the built-in function also used zero-padding.</p>
     <h3>Finite Difference Filters</h3>
-    <p>I also used the 3 functions to convolve my image using the finite difference operators: Dx = [1, 0, -1], Dy = [1, 0, -1]T. Below are the results:</p>
+    <p>I also used the 3 functions to convolve my image using the finite difference operators: <b>dx = [1, 0, -1] and dy = [1, 0, -1]<sup>T</sup></b>. Below are the results:</p>
     <h4>Dx filter</h4>
     <div class="image-gallery">
         <div class="image-holder">
@@ -68,17 +68,17 @@
         <div class="image-holder">
             <h4>Using Four Loop Function</h4>
             <img class="image" src="media/out_part1_1_fourloop_dx.jpeg"/>
-            <p>Filter: Dx finite difference filter</p>
+            <p>Filter: dx finite difference filter</p>
         </div>
         <div class="image-holder">
             <h4>Using Two Loop Function</h4>
             <img class="image" src="media/out_part1_1_twoloop_dx.jpeg"/>
-            <p>Filter: Dx finite difference filter</p>
+            <p>Filter: dx finite difference filter</p>
         </div>
         <div class="image-holder">
             <h4>Using scipy.signal.convolve2d()</h4>
             <img class="image" src="media/out_part1_1_convolve2_dx.jpeg"/>
-            <p>Filter: Dx finite difference filter</p>
+            <p>Filter: dx finite difference filter</p>
         </div>
     </div>
     <h4>Dy filter</h4>
@@ -86,30 +86,29 @@
         <div class="image-holder">
             <h4>Original Image</h4>
             <img class="image" src="media/part1_1img.jpeg"/>
-            <p>Filter: Dy finite difference filter</p>
+            <p>Filter: N/A</p>
         </div>
         <div class="image-holder">
             <h4>Using Four Loop Function</h4>
             <img class="image" src="media/out_part1_1_fourloop_dy.jpeg"/>
-            <p>Filter: Dy finite difference filter</p>
+            <p>Filter: dy finite difference filter</p>
         </div>
         <div class="image-holder">
             <h4>Using Two Loop Function</h4>
             <img class="image" src="media/out_part1_1_twoloop_dy.jpeg"/>
-            <p>Filter: Dy finite difference filter</p>
+            <p>Filter: dy finite difference filter</p>
         </div>
         <div class="image-holder">
             <h4>Using scipy.signal.convolve2d()</h4>
             <img class="image" src="media/out_part1_1_convolve2_dy.jpeg"/>
-            <p>Filter: Dy finite difference filter</p>
+            <p>Filter: dy finite difference filter</p>
         </div>
     </div>
-    <p><i>*note: to save the convolved images from the finite difference filters I had to normalize the values for visualization, as the finite difference filter calculates the gradient, which can be negative. The normalization equation I used was: (image - max_value) / (max_value - min_value)</i></p>
+    <p><i>*note: to save the convolved images from the finite difference filters I had to normalize the values for visualization, as the finite difference filter calculates the gradient, which can be negative. The normalization equation I used was: <b>(image - max_value) / (max_value - min_value)</b></i></p>
 
     <h3>Analysis</h3>
-    <p>Just by comparing the image results, all 3 functions generated the same images when applying the 9x9 box filter and finite difference filters. There is no difference in appearance. Also, when I subtracted some of the image matrices from each other, they returned a zero matrix. This indicates to me that all 3 functions have the same functionality.
-    <br/>The time complexity of all the functions should be the same O(x * y * i * j), since the convolution must iterate through all the coordinates in the image (x * y), and for each pixel in the image it has to iterate through the size of the kernel to compute the sum of the dot product between the surrounding pixels and the kernel (i * j). However, I noticed that when I ran the code, the four loop function was the slowest, and the built-in scipy function was the fastest. This could be due to parallelization during the scipy function to speed up the runtime.
-    <br/>
+    <p>Just by comparing the image results, all 3 functions generated the same images when applying the 9x9 box and finite difference filters. I did not notice any obvious differences in appearance between the results of the different functions. Also, when I subtracted some of the image matrices from each other, they returned a zero matrix. This indicates to me that all 3 functions have the same functionality and give the same results!
+    <br/>The time complexity of all the functions are the same O(x * y * i * j) since the convolution must iterate through all the coordinates in the image (x * y), and for each pixel in the image it has to iterate through the size of the kernel to compute the sum of the dot product between the surrounding pixels and the kernel (i * j). However, I noticed that when I ran the code, the four loop function was the slowest, and the built-in scipy function was the fastest. This could maybe be due to parallelization or added efficiencies in the scipy function to speed up the runtime. My two loop function also was slightly faster than my four loop function likely because instead of the nested for loops to calculate the convolved value for each pixel I used the built-in numpy dot product and sum functions.
     </p>
 
     <h2>Part 1.2</h2>
@@ -131,25 +130,25 @@
             <p>Filter: dy finite difference filter, finds horizontal lines</p>
         </div>
     </div>
-    <p>In order to visualize and save the results of the finite difference filters convolved with the cameraman image, I had to normalize the values like in part 1.1 using the same equation ((image - max_value) / (max_value - min_value)).</p>
-    <p>Afterwards, I combined the non-normalized partial derivatives to create a gradient magnitude image using the following gradient magnitude equation:
-        <br/>||f|| = &radic;((df/dx)<sup>2</sup> + (df/dy)<sup>2</sup>)
+    <p>In order to visualize and save the results of the finite difference filters convolved with the cameraman image, I had to normalize the values like in Part 1.1 using the same equation ((image - max_value) / (max_value - min_value)).</p>
+    <p>Afterwards, I used the non-normalized partial derivatives to create a gradient magnitude image using the gradient magnitude equation:
+        <br/><b>||f|| = &radic;((df/dx)<sup>2</sup> + (df/dy)<sup>2</sup>)</b>
         <br/> Where df/dx is the matrix from the convolution between my image and dx, and df/dy is the matrix from the convolution between my image and dy
-        <br/> Below is the result:
+        <br/> Below is the result!
     </p>
     <div class="image-holder">
         <h4>Gradient Magnitude Image</h4>
         <img class="image" src="media/out_part1_2_grad_magnitude.jpeg"/>
     </div>
-    <p>I then binarized the image to turn the gradient magnitude image into a line image. By binarizing, values below a defined threshold will become 0 and values above the threshold will be set to 1. In this case, I used the threshold = 0.38. I chose this threshold after trying a few values between 0.3-0.5. The line image should have minimal noise, and so when I used a threshold value of greater than 0.4 there was more noise around the bottom of the image due to the city background. Therefore, I stuck to 0.38 because it still creates a line image of the cameraman and his camera while minimizing the unnecessary noise at the bottom of the image from the city.</p>
+    <p>I then binarized the image to turn the gradient magnitude image into a line image. By binarizing, values below a defined threshold will become 0 and values above the threshold will be set to 1. In this case, I used the threshold = 0.38. I chose this threshold after trying a few values between 0.3-0.5. The line image should have minimal noise, so I tested to see which threshold would give minimal noise but still capture most of the camerman's silhouette and details. When I used a threshold value of greater than 0.4 there was more noise around the bottom of the image due to the city background. Therefore, I stuck to 0.38 because it still creates a line image of the cameraman and his camera while minimizing the unnecessary noise from the city.</p>
     <div class="image-holder">
         <h4>Binarized Gradient Magnitude Image</h4>
         <img class="image" src="media/out_part1_2_binarized.jpeg"/>
     </div>
 
     <h2>Part 1.3</h2>
-    <h3>1.3.1 Gaussian Filter to blur Cameraman Image</h3>
-    <p>To reduce noise, I applied the gaussian filter with a sigma of 4 to the cameraman image to blur it. This reduces some of the high frequencies, which could help reduce the noise from the city in the background.
+    <h3>1.3.1 Gaussian Filter to Blur Cameraman Image</h3>
+    <p>To reduce noise, I applied the gaussian filter with <b>sigma = 4</b> to the cameraman image to blur it. This reduces some of the high frequencies, which could help reduce the noise from the city in the background.
         <br/>Then, I did the same operations as in Part 1.2 to calculate the partial derivatives of the blurred image, gradient magnitude image and binarized image.
         <br/>Below are the results!</p>
     <div class="image-gallery">
@@ -182,7 +181,7 @@
             <p>Threshold = 0.07</p>
         </div>
     </div>
-    <p>However, my threshold was a lot lower than in Part 1.2, as it was 0.07. This is probably because of the blurring effect which removes high frequencies, making the gradients a lot smaller so a lower threshold is needed. I also compared the binarized image with my binarized image from Part 1.2. Due to the blurring removing some high frequencies, it made the line in my new binarized image a lot thicker than the one in part 1.2. Another big difference I noticed is that even though my line image captured more details of the cameraman's legs, there is not a lot of background noise visible. However, some of the fine details of the camera was not captured.</p>
+    <p>However, my threshold was a lot lower than in Part 1.2, as it was 0.07. This is probably because of the blurring effect which removes high frequencies, making the gradients a lot smaller so a lower threshold is needed. I also compared the binarized image with my binarized image from Part 1.2. Due to the blurring removing some high frequencies, it made the line in my new binarized image a lot thicker than the one in part 1.2. Another big difference I noticed is that even though my line image captured more details of the cameraman's legs, there is not a lot of background noise visible. This is different to what happened in Part 1.2, where if I tried to increase the threshold so that the cameraman's legs would have more detail, it added a lot of background. However, some of the fine details of the camera was not captured which could be because these details were lower frequency and so were not captured after I blurred with the gaussian filter.</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Binarized Gradient Magnitude Part 1.2</h4>
@@ -195,7 +194,7 @@
     </div>
 
     <h3>1.3.2 Derivative of Gaussian Filters</h3>
-    <p>I applied my finite difference filters to convolve a gaussian filter of <b>sigma 2</b> to create partial derivatives of the gaussian filter in both the x and y direction. Afterwards, my program did convolutions of the cameraman image with both partial derivatives of the gaussian filter. Afterwards, I generated the gradient magnitude image and binarized image like in Part 1.2. Below are the results and the DoG filters.</p>
+    <p>I applied my finite difference filters to convolve a gaussian filter of <b>sigma = 2</b> to create partial derivatives of the gaussian filter in both the x and y direction. Afterwards, my program did convolutions of the cameraman image with both partial derivatives of the gaussian filter. Then I generated the gradient magnitude and binarized images using the same equations and steps as in Part 1.2. Below are the results and the DoG filters.</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Original Image</h4>
@@ -231,7 +230,7 @@
             <p>Threshold = 0.06</p>
         </div>
     </div>
-    <p>I had to lower the threshold to 0.06 to get a very similar binarized image to the first part of Part 1.3. This result also had a thicker line than Part 1.2, but was able to capture more line details of the cameraman without adding too much background noise.</p>
+    <p>I had to lower the threshold to 0.06 to get a more similar binarized image to the first part of Part 1.3. This result also had a thicker line than Part 1.2, but was able to capture more line details of the cameraman without adding too much background noise.</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Binarized Gradient Magnitude Part 1.3.1</h4>
@@ -242,13 +241,16 @@
             <img class="image" src="media/out_part1_3_2binary.jpeg"/>
         </div>
     </div>
+    <p>I lowered the threshold in Part 1.3.2 because more of the city background was visible with a threshold of 0.07. However, when comparing the two images I notice that lowering the threshold did end up removing even more details of the camera lens as a result.</p>
 
     <h2>Part 2</h2>
-    <p>When I called the scipy.signal.convolve2d() function, I used boundary='symm' instead of 'fill' for the following parts because when I added padding of 0, it created a light border around the image during part 2.1 when I added the higher frequencies back into the original image. According to the scipy documentation, 'symm' is supposed to help avoid these white edges around the image. [https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.convolve2d.html]</p>
+    <p>When I called the <b>scipy.signal.convolve2d()</b> function, I used boundary='symm' instead of 'fill' for part 2 because when I added padding of 0, it created a light border around the image during part 2.1 when I added the higher frequencies back into the original image. According to the <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.convolve2d.html">scipy documentation</a>, 'symm' is supposed to help avoid these white edges around the image.
+    <br/> This part also required me to convolve colored images. To convolve a colored image I convolved each channel separately with the filter and combined the 3 convolved color channels into an RGB image.</p>
+    
     <h2>Part 2.1</h2>
     <h3></h3>
     <h3>Initial Function</h3>
-    <p>The task for this part was to create code that could sharpen an image using a Gaussian filter. To sharpen the images, I needed to magnify the existing high frequencies in the image. I did this by doing a convolution of the image with the gaussian filter which blurs the image and removes high frequencies. Then, I subtracted the blurred image from the original image to obtain a matrix of the high frequencies of the image. I added the matrix of high frequencies to the original image to sharpen the image. In addition, I multiplied the matrix of high frequencies by 1.1 (alpha) to increase the magnitude of the high frequencies, further sharpening the image. The result of this operation on the image 'taj.jpg' was:</p>
+    <p>The task for this part was to create code that could sharpen an image using a Gaussian filter. To sharpen the images, I needed to magnify the existing high frequencies in the image. I did this by doing a convolution of the image with the gaussian filter which blurs the image and removes high frequencies. Then, I subtracted the blurred image from the original image to obtain a matrix of only the higher frequencies of the image. I added the matrix of high frequencies to the original image to sharpen the image. In addition, I multiplied the matrix of high frequencies by an alpha to increase the magnitude of the high frequencies, further sharpening the image. The result of this operation on the image 'taj.jpg' was:</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Original Image</h4>
@@ -262,7 +264,7 @@
         <div class="image-holder">
             <h4>High Frequency Visualization</h4>
             <img class="image" src="media/out_part2_1_1high_freq_taj.jpg"/>
-            <p>Calculated by taking original (image - blurred image) * alpha, where alpha = 1.1</p>
+            <p>Calculated by taking <i>(original image - blurred image) * alpha</i>, where alpha = 1.1</p>
         </div>
         <div class="image-holder">
             <h4>Sharpened Version</h4>
@@ -271,9 +273,9 @@
         </div>
     </div>
     <h3>Combining into One Convolution</h3>
-    <p>I also combined the steps together using the following unsharp mask filter formula that was introduced during lecture 6: (1 + alpha) * unit_impulse - alpha * gaussian filter.
-        <br/> The unit impulse is a kernel with 1 in the center and 0 around it to represent the original image's pixel. This is because to sharpen the image you need image - (image - blurred image) * alpha. The alpha is how much I multiply the matrix of high frequencies to adjust the sharpness of the image. The unit impulse is why I needed to make the kernel size 6 * sigma + 1, as this will ensure that the kernel is always odd so that there is a center of the kernel.
-        <br/> The result of the single unsharp mask filter convolution on the image was:
+    <p>I also combined the steps together using the following unsharp mask filter formula that was introduced during lecture 6: <b>(1 + alpha) * unit_impulse - alpha * gaussian_filter</b>.
+        <br/> The unit impulse is a kernel with 1 in the center and 0 around it to represent the original image's pixel. This is because to sharpen the image you need to do <b>image + (image - blurred image) * alpha</b>. So the unit impulse is needed because for each pixel on the image I'm finding the new value by adding the <b>pixel + alpha * pixel - alpha * (value of the convolution of the gaussian filter at the pixel)</b>. The unit impulse is why I needed to make the kernel size <b>6 * sigma + 1</b>, as this will ensure that the kernel is always odd so that there is a center of the kernel.
+        <br/> The result of the single unsharp mask filter convolution on the 'taj.jpg' image is below. I did not notice any differences in the result between just using a singular convolution and what I did previously, which is what is expected since both algorithms essentially do the same operations.
     </p>
     <div class="image-gallery">
         <div class="image-holder">
@@ -297,14 +299,14 @@
             <img class="image" src="media/out_part2_1_2sharpen3_taj.jpg"/>
         </div>
         <div class="image-holder">
-            <h4>Sharpened Image with Alpha = 36</h4>
+            <h4>Sharpened Image with Alpha = 6</h4>
             <img class="image" src="media/out_part2_1_2sharpen6_taj.jpg"/>
         </div>
     </div>
     <p>Increasing the alpha results in an increase in the values of high frequency that is added back into the original image. This creates a much sharper image, as the appearance of sharpness in an image comes from the amount of high frequencies. But since it does increase the magnitude of the high frequencies, it also ended up adding a lot of noise especially to the sky.</p>
     
     <h3>Results on my own images</h3>
-    <p>Below are the results of applying the filter to a blurry image I took at a restaurant. I think that the function helped successfully sharpen the image and make it look less blurry.</p>
+    <p>Below are the results of applying the filter to a blurry image I took at a restaurant. I think that the function helped successfully sharpen the image and make it look less blurry. Looking at the high frequencies extracted, it seemed to successfuly extract high frequency details such as the outlines of the chairs tables, and chandelier at the top. These lines and details look much more pronounced on both the sharpened images.</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Original Image</h4>
@@ -318,7 +320,7 @@
         <div class="image-holder">
             <h4>High Frequency Visualization</h4>
             <img class="image" src="media/out_part2_1_1high_freq_to_sharpen.jpeg"/>
-            <p>Calculated by taking original (image - blurred image) * alpha, where alpha = 2</p>
+            <p>Calculated by taking <i>(original image - blurred image) * alpha</i>, where alpha = 2</p>
         </div>
         <div class="image-holder">
             <h4>Sharpened Version</h4>
@@ -331,7 +333,7 @@
             <p>sigma = 2, alpha = 2</p>
         </div>
     </div>
-    <p>I chose an image I took of a panda statue to blur using a gaussian filter then sharpen using the unsharp mask filter convolution:</p>
+    <p>I chose an image I took of a panda statue to blur using a gaussian filter then re-sharpen using the unsharp mask filter:</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Original Image</h4>
@@ -350,7 +352,7 @@
         <div class="image-holder">
             <h4>High Frequency Visualization</h4>
             <img class="image" src="media/out_part2_1_1high_freq_panda.jpeg"/>
-            <p>Calculated by taking original (image - blurred image) * alpha, where alpha = 1.1</p>
+            <p>Calculated by taking <i>(original image - blurred image) * alpha</i>, where alpha = 4</p>
         </div>
         <div class="image-holder">
             <h4>Sharpened Version</h4>
@@ -363,23 +365,23 @@
             <p>sigma = 3, alpha = 4</p>
         </div>
     </div>
-    <p>Using the same sigme but an alpha of 4, I was able to slightly resharpen the image after I blurred it using a gaussian filter. However, because I used an alpha of 4, I think it also ended up adding a lot of noise to the image, making the sharpened function noisier than my original image.</p>
+    <p>Using a sigma of 3 but an alpha of 4, I was able to slightly resharpen the image after I blurred it using a gaussian filter. However, because I used an alpha of 4, I think it also ended up adding a lot of noise to the image, making the sharpened function noisier than my original image. I did test out a smaller sigma with a smaller alpha, but it did not sharpen the image very effectively.</p>
 
     <h2>Part 2.2</h2>
-    <p>To create the hybrid images, I needed to combine an image with high frequencies and another with lower frequencies. The higher frequencies have more detail that can be seen up close, and the lower frequency image will be visible from further away as the human eye aliases the high frequencies away. For this task, I stuck to using just the greyscale version of the images.</p>
+    <p>To create the hybrid images, I needed to combine an image with high frequencies and another with lower frequencies. The higher frequencies have more detail that can be seen up close, and the lower frequencies will be visible from further away as the human eye aliases the high frequencies away. For this task, I used the greyscale version of the images.</p>
     
     <h3>Align Images</h3>
     <p>To align the images, I used the starter code provided. The coordinates I selected on the images to align them are listed in my results section.</p>
     
     <h3>Low Frequency Filter Pass</h3>
-    <p>For my low frequency filter, I created a gaussian filter and convolved the 'low-pass' images with the gaussian filter. Blurring with a gaussian filter removes the high frequency details, leaving only the lower frequency details. The kernel size of the gaussian filter was 6 * sigma.</p>
+    <p>For my low frequency filter, I created a gaussian filter and convolved the 'low-pass' images with the gaussian filter. Blurring with a gaussian filter removes the high frequency details, leaving only the lower frequency details. The kernel size of the gaussian filter was <b>6 * sigma</b>.</p>
 
     <h3>High Frequency Filter Pass</h3>
-    <p>For my high frequency filter, I created another gaussian filter separately from the low frequency filter. I decided to do this because when I initially used the same gaussian filter for both passes, I found that the results either left too much high frequencies in the low pass image or too little high frequencies in the high pass image. Therefore, having two separate filters for the low and high frequency filter passes allowed me to adjust each image separately. The kernel size of the gaussian filter was also 6 * sigma.</p>
+    <p>For my 'high-pass' images, I created another gaussian filter separately from the low frequency filter. I decided to do this because when I initially used the same gaussian filter for both passes, I found that the results either left too many high frequencies in the low pass image or too little high frequencies in the high pass image. Therefore, having two separate filters for the low and high frequency filter passes allowed me to adjust each image separately and fine tune more to get the best result. The kernel size of the high-pass gaussian filter was also <b>6 * sigma</b>.</p>
     <p>To get the high frequency image, I convolved the 'high-pass' images with the gaussian filter and then subtracted this result from the original image. Since the gaussian filter only keeps lower frequencies, subtracting the result from the original image will only keep the higher frequencies. For one of the hybrid images I also sometimes used an alpha value > 1 to magnify the high frequencies of the 'high-pass' images to make it more visible.</p>
 
     <h3>Results!</h3>
-    <p>Here is the gallery of my hybrid images, including the hybrid image of the samples given.
+    <p>Below is the gallery of my hybrid images, including the hybrid image of the samples given.
         <br/> Here is the result for the sample image of Derek and Nutmeg:
     </p>
 
@@ -402,7 +404,7 @@
         </div>
     </div>
 
-    <p>For my first hybrid image, I used a photo of my maltese dog, Summer, and a photo of a family friend's corgi, Red. I selected Summer to be the low frequency image, as in the image Summer's details are smoother and therefore might have less high frequencies to extract. Red's fur has more high frequency details in his fur and contours, which would likely make this a better choice for the high frequency filter, as there are more high frequencies to extract. Below are the results:</p>
+    <p>For my first hybrid image, I used a photo of my maltese dog, Summer, and a photo of a family friend's corgi, Red. I selected Summer to be the low frequency image, as Summer's fur details in the image are smoother and therefore might have less high frequencies to extract. Red has more high frequency details in his fur and contours, which would made this image better choice for the high frequency filter, as there are more high frequencies to extract. Below are the results:</p>
 
     <div class="image-gallery">
         <div class="image-holder">
@@ -422,7 +424,7 @@
                 <br/>High-pass gaussian filter sigma = 5; alpha = 2</p>
         </div>
     </div>
-    <p><i>*note: I also had to rotate the image result since for some reason the output put the image sideways.</i>
+    <p><i>*note: I also had to rotate the hybrid image of Red and Summer since for some reason the code I wrote turned the image sideways.</i>
     <br/>Below is the fourier visualizations of the hybrid process</p>
     <div class="image-gallery">
         <div class="image-holder">
@@ -447,6 +449,17 @@
             <img class="image" src="media/hybrid_fourier.png"/>
         </div>
     </div>
+    <p>Here are also the intermediate results!</p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Low-Pass of Summer Image</h4>
+            <img class="image" src="media/out_part2_2_lowpass_summer_hybrid1.jpeg"/>
+        </div>
+        <div class="image-holder">
+            <h4>High-Pass of Red Image</h4>
+            <img class="image" src="media/out_part2_2_highpass_red_hybrid1.jpeg"/>
+        </div>
+    </div>
     
     <p>My second hybrid image was inspired by the recently released 'The Odyssey' and 'Spiderman: No Way Home'. Jon Bernthal was in both movies, and his characters had very different hairstyles. Therefore, my hybrid image was of Jon Bernthal as the Punisher and Menelaus. Since both photos seemed to have similar levels of high frequencies, I had to test out which image would be better as the low frequency image. Ultimately, I selected the image of Jon Bernthal as Menelaus to be the low frequency image. When I blur the image of Jon Bernthal as the Punisher, his hair begins to blur into the background. But when I extract the high frequencies, his hair is much more visible.</p>
     <div class="image-gallery">
@@ -467,7 +480,7 @@
                 <br/>High-pass gaussian filter sigma = 40</p>
         </div>
     </div>
-    <p>The website I found the images in are: <a href="https://theodyssey.fandom.com/wiki/Menelaus">Menelaus</a>, <a href="https://www.newsweek.com/entertainment/comics/jon-bernthal-teases-dark-punisher-special-2043153">Punisher</a></p>
+    <p>The website I found the images in are: <a href="https://theodyssey.fandom.com/wiki/Menelaus">Menelaus</a>, <a href="https://www.newsweek.com/entertainment/comics/jon-bernthal-teases-dark-punisher-special-2043153">Punisher</a>.</p>
 
     <h2>Part 2.3 and 2.4</h2>
     <h3>Gaussian and Laplacian Stacks</h3>
@@ -495,7 +508,8 @@
             <img class="image" src="media/out_part2_3_picc.jpeg"/>
             <p>High frequency</p>
         </div>
-
+    </div>
+    <div class="image-gallery">
         <div class="image-holder">
             <h4>(d) Apple Laplacian Level 2</h4>
             <img class="image" src="media/out_part2_3_picd.jpeg"/>
@@ -511,7 +525,8 @@
             <img class="image" src="media/out_part2_3_picf.jpeg"/>
             <p>Middle frequency</p>
         </div>
-
+    </div>
+    <div class="image-gallery">
         <div class="image-holder">
             <h4>(g) Apple Laplacian Level 4</h4>
             <img class="image" src="media/out_part2_3_picg.jpeg"/>
@@ -527,7 +542,8 @@
             <img class="image" src="media/out_part2_3_pici.jpeg"/>
             <p>Low frequency</p>
         </div>
-
+    </div>
+    <div class="image-gallery">
         <div class="image-holder">
             <h4>(j) Apple</h4>
             <img class="image" src="media/out_part2_3_picj.jpeg"/>
@@ -568,7 +584,8 @@
             <img class="image" src="media/out_part2picc_apple.jpeg"/>
             <p>High frequency</p>
         </div>
-
+    </div>
+    <div class="image-gallery">
         <div class="image-holder">
             <h4>(d) Apple Laplacian Level 2</h4>
             <img class="image" src="media/out_part2picd_apple.jpeg"/>
@@ -584,7 +601,8 @@
             <img class="image" src="media/out_part2picf_apple.jpeg"/>
             <p>Middle frequency</p>
         </div>
-
+    </div>
+    <div class="image-gallery">
         <div class="image-holder">
             <h4>(g) Apple Laplacian Level 4</h4>
             <img class="image" src="media/out_part2picg_apple.jpeg"/>
@@ -600,7 +618,8 @@
             <img class="image" src="media/out_part2pici_apple.jpeg"/>
             <p>Low frequency</p>
         </div>
-
+    </div>
+    <div class="image-gallery">
         <div class="image-holder">
             <h4>(j) Apple</h4>
             <img class="image" src="media/out_part2picj_apple.jpeg"/>
@@ -625,12 +644,10 @@
         <div class="image-holder">
             <h4>Black Forest Cake Original Image</h4>
             <img class="image" src="media/blackforestcake_blending.jpeg"/>
-            <p>Source:</p>
         </div>
         <div class="image-holder">
             <h4>Strawberry Shortcake Original Image</h4>
             <img class="image" src="media/strawberryshortcake_blending.jpeg"/>
-            <p>Source: </p>
         </div>
         <div class="image-holder">
             <h4>Blended Image</h4>
@@ -644,12 +661,10 @@
         <div class="image-holder">
             <h4>Summer Original Image</h4>
             <img class="image" src="media/summer_blending.jpeg"/>
-            <p>Source:</p>
         </div>
         <div class="image-holder">
             <h4>Cat Original Image</h4>
             <img class="image" src="media/cat_blending.jpeg"/>
-            <p>Source: </p>
         </div>
         <div class="image-holder">
             <h4>Blended Image</h4>
@@ -665,12 +680,10 @@
         <div class="image-holder">
             <h4>Lion Original Image</h4>
             <img class="image" src="media/lion_blending.jpeg"/>
-            <p>Source:</p>
         </div>
         <div class="image-holder">
             <h4>Leopard Original Image</h4>
             <img class="image" src="media/leopard_blending.jpeg"/>
-            <p>Source: </p>
         </div>
         <div class="image-holder">
             <h4>Blended Image</h4>
@@ -681,7 +694,7 @@
     <p>Unfortunately I struggled to fully blend the top half of the leopard's head into the lion's face which is likely due to the large difference in pattern. Maybe I would need more levels in my laplacian and gaussian stacks to have more blending. However, I noticed that the leopard and lion mouths blended quite well together! So I think that it was successful in the lower portions when there was not a stark difference in the fur patterns.</p>
 
     <h3>Analysis of my results</h3>
-    <p>I think that my franken-cake was the most successful blending out of the 3. I think that this was partly due to 2 things. Firstly, I was able to find pictures that had very similar angles and perspectives, which made the transition between the cakes very smooth in terms of perspective. Secondly, the part where the blending seam was had very similar textures between the two images so the blending worked really well. Unfortunately the patterns and textures were not super similar in my other two images, so it was a little hard to fully blend the patterns together smoothly.</p>
+    <p>I think that my franken-cake was the most successful blending out of the 3. I think that this was partly due to 2 things. Firstly, I was able to find pictures that had very similar angles and perspectives, which made the transition between the cakes very smooth in terms of perspective. Secondly, the part where the blending seam was had very similar textures between the two images so the blending worked really well. Unfortunately the patterns and textures were not super similar in my other two images, so it was a little hard to fully blend the patterns together smoothly. Also, the end results were a little desaturated compared to the original images. I think this was because I had to normalize the pixel values to save the image.</p>
 
     <h2>My Most Important Takeaway</h2>
     <p>I feel like the most important thing I learnt from this project was a much deeper understanding of how high and low frequencies affect our own perception of an image. Before taking this class and doing this project, I had never given any thought to how frequencies of an image can affect how sharp or blurred it looks. This concept is something that I found so interesting, especially since I enjoy taking photos as a hobby and sometimestake blurry photos.</p>
