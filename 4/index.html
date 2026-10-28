@@ -382,7 +382,8 @@
     </div>
 
     <p><b>My Observations and Comparisons:</b> I did not see any noticeable difference between the nearest neighbors and bilinear interpolation results. Both functions created relatively smooth images. However, I noticed that when I zoomed in, the image produced by the bilinear interpolation was slightly smoother at the edges between the book/playbill and the background. However, this was not a very big difference.
-    <br/> This is different from what I expected, as I expected bilinear interpolation to create smoother images. Bilinear interpolation takes the weighted average color of the 4 nearest pixels for interpolated pixels, creating a more smooth transition between pixels. While nearest neighbor interpolation just takes the color of the nearest pixel, making the color transition less smooth ideally.</p>
+    <br/> This is different from what I expected, as I expected bilinear interpolation to create smoother images. Bilinear interpolation takes the weighted average color of the 4 nearest pixels for interpolated pixels, creating a more smooth transition between pixels. While nearest neighbor interpolation just takes the color of the nearest pixel, making the color transition less smooth ideally.
+    <br/>Additionally, my rectifications did not make the book and playbill completely rectangular. This is likely due to inaccuracies in my measurements and when I selected the points. In addition, I only had 4 points of the rectangle, but for least squares using only 4 points means that the solution is unstable. Therefore, small inaccuracies in my point selection could be the cause of the imperfect rectifications.</p>
 
     <p>All correspondence points were found using https://pixspy.com/</p>
 
