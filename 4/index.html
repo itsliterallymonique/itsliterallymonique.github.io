@@ -262,37 +262,38 @@
  <br/>[ 2.02093278e-02  9.97514136e-01 -6.08416960e+01]
  <br/>[-4.98732999e-18 -8.67361738e-19  1.00000000e+00]]
 
-            <p><b>Matrix A: </b>[[310. 429.   1 0 0 0 0 0 0.]
- [[342. 368.   1 0 0 0 0 0 0.]
- [  0 0 0. 342. 368.   1 0 0 0.]
- [  0 0 0 0 0 0. 342. 368.   1.]
- [302. 541 1 0 0 0 0 0 0.]
- [  0 0 0. 302. 541 1 0 0 0.]
- [  0 0 0 0 0 0. 302. 541 1.]
- [465. 442.   1 0 0 0 0 0 0.]
+            <p><b>Matrix A: </b>[[342. 368.   1 0 0 0 0 0 0]
+ [  0 0 0. 342. 368.   1 0 0 0]
+ [  0 0 0 0 0 0. 342. 368.   1]
+ [302. 541 1 0 0 0 0 0 0]
+ [  0 0 0. 302. 541 1 0 0 0]
+ [  0 0 0 0 0 0. 302. 541 1]
+ [465. 442.   1 0 0 0 0 0 0]
  [  0 0 0. 465. 442.   1 0 0 0]
  [  0 0 0 0 0 0. 465. 442.   1]
  [695. 630 1 0 0 0 0 0 0.]
  [  0 0 0. 695. 630 1 0 0 0.]
- [  0 0 0 0 0 0. 695. 630 1.]
- [756. 447.   1 0 0 0 0 0 0.]
+ [  0 0 0 0 0 0. 695. 630 1]
+ [756. 447.   1 0 0 0 0 0 0]
  [  0 0 0. 756. 447.   1 0 0 0]
  [  0 0 0 0 0 0. 756. 447.   1]
- [801. 495.   1 0 0 0 0 0 0.]
- [  0 0 0. 801. 495.   1 0 0 0.]
- [  0 0 0 0 0 0. 801. 495.   1.]
- [816. 507.   1 0 0 0 0 0 0.]
- [  0 0 0. 816. 507.   1 0 0 0.]
- [  0 0 0 0 0 0. 816. 507.   1.]
- [932. 398.   1 0 0 0 0 0 0.]
- [  0 0 0. 932. 398.   1 0 0 0.]
- [  0 0 0 0 0 0. 932. 398.   1.]]
+ [801. 495.   1 0 0 0 0 0 0]
+ [  0 0 0. 801. 495.   1 0 0 0]
+ [  0 0 0 0 0 0. 801. 495.   1]
+ [816. 507.   1 0 0 0 0 0 0]
+ [  0 0 0. 816. 507.   1 0 0 0]
+ [  0 0 0 0 0 0. 816. 507.   1]
+ [932. 398.   1 0 0 0 0 0 0]
+ [  0 0 0. 932. 398.   1 0 0 0]
+ [  0 0 0 0 0 0. 932. 398.   1]]
 
     </p>
     <p><b>Matrix b:</b> [74, 309, 1, 26, 490, 1, 207, 390, 1, 433, 579, 1, 499, 400, 1, 541, 447, 1, 554, 461, 1, 663, 359, 1]
 </p>
         </div>
     </div>
+
+    <p>All correspondence points were found using the tool given: https://cal-cs180.github.io/fa23/hw/proj3/tool.html</p>
     
     <h2>A.3: Interpolation</h2>
     <p>I attempted to rectify an image of my "Taylor Swift: the Era's Tour" book and a playbill of "Hamilton". I took images of both items at an angle so that they don't look rectangular in the image. To rectify the images and make them rectangular, I measured the dimensions of these items and used these to identify the target points to create the homography matrix that will be used to warp my images.
@@ -323,18 +324,17 @@
  <br/>[-8.67361738e-19  0.00000000e+00  1.00000000e+00]]
 
 
-            <p><b>Matrix A: </b>[[0, 0], [482, 0], [0, 566], [482, 566]], 
-[[228.  30 1 0 0 0 0 0 0.], 
- [  0 0 0. 228.  30 1 0 0 0.], 
- [  0 0 0 0 0 0. 228.  30 1.], 
- [556. 135.   1 0 0 0 0 0 0.], 
- [  0 0 0. 556. 135.   1 0 0 0.], 
+            <p><b>Matrix A: </b>[[228.  30 1 0 0 0 0 0 0], 
+ [  0 0 0. 228.  30 1 0 0 0], 
+ [  0 0 0 0 0 0. 228.  30 1], 
+ [556. 135.   1 0 0 0 0 0 0], 
+ [  0 0 0. 556. 135.   1 0 0 0], 
  [  0 0 0 0 0 0. 556. 135.   1], 
  [ 33. 410 1 0 0 0 0 0 0.], 
- [  0 0 0.  33. 410 1 0 0 0.], 
+ [  0 0 0.  33. 410 1 0 0 0], 
  [  0 0 0 0 0 0.  33. 410 1], 
  [420. 566.   1 0 0 0 0 0 0.], 
- [  0 0 0. 420. 566.   1 0 0 0.], 
+ [  0 0 0. 420. 566.   1 0 0 0], 
  [  0 0 0 0 0 0. 420. 566.   1]]
 
 
@@ -363,34 +363,39 @@
                 <br/>[-1.59212595e+00  1.15883482e+00  5.70605515e+02], 
                 <br/>[ 1.30104261e-18  4.33680869e-19  1.00000000e+00]]
 
-            <p><b>Matrix A: </b>[[423.  81 1 0 0 0 0 0 0.], 
-                [  0 0 0. 423.  81 1 0 0 0.], 
-                [  0 0 0 0 0 0. 423.  81 1.], 
- [576. 307.   1 0 0 0 0 0 0.], 
- [  0 0 0. 576. 307.   1 0 0 0], 
- [  0 0 0 0 0 0. 576. 307.   1], 
- [ 36. 305.   1 0 0 0 0 0 0.], 
- [  0 0 0.  36. 305.   1 0 0 0], 
- [  0 0 0 0 0 0.  36. 305.   1], 
- [255. 594.   1 0 0 0 0 0 0], 
- [  0 0 0. 255. 594.   1 0 0 0], 
- [  0 0 0 0 0 0. 255. 594.   1]]
+            <p><b>Matrix A: </b>[[423 81 1 0 0 0 0 0 0], 
+                [  0 0 0 423 81 1 0 0 0], 
+                [  0 0 0 0 0 0 423 81 1], 
+ [576 307 1 0 0 0 0 0 0], 
+ [  0 0 0. 576 307 1 0 0 0], 
+ [  0 0 0 0 0 0. 576 307 1], 
+ [ 36 305 1 0 0 0 0 0 0], 
+ [  0 0 0 36 305 1 0 0 0], 
+ [  0 0 0 0 0 0 36 305 1], 
+ [255 594 1 0 0 0 0 0 0], 
+ [  0 0 0 255. 594 1 0 0 0], 
+ [  0 0 0 0 0 0 255 594 1]]
 
     </p>
     <p><b>Matrix b:</b> [0, 0, 1, 544, 0, 1, 0, 860, 1, 544, 860, 1]</p>
         </div>
     </div>
 
-    <h2>A.4 Blending Images into Mosaics</h2>
-    <p>To combine both images, I used the alpha mask I recovered from my image warping function in part A.3. The warped image would be masked using image * alpha_mask, and the non-warped image would be masked using image * (1 - alpha_mask). These masks were applied at the laplacian levels, which is discussed below.
+    <p><b>My Observations and Comparisons:</b> I did not see any noticeable difference between the nearest neighbors and bilinear interpolation results. Both functions created relatively smooth images. However, I noticed that when I zoomed in, the image produced by the bilinear interpolation was slightly smoother at the edges between the book/playbill and the background. However, this was not a very big difference.
+    <br/> This is different from what I expected, as I expected bilinear interpolation to create smoother images. Bilinear interpolation takes the weighted average color of the 4 nearest pixels for interpolated pixels, creating a more smooth transition between pixels. While nearest neighbor interpolation just takes the color of the nearest pixel, making the color transition less smooth ideally.</p>
 
-    <br/>To reduce the edge artifacts of the individual images, I used a 2-level laplacian stack to blend the "seam" between the left and right images. This 2-level laplacian stack consists of:</p>
+    <p>All correspondence points were found using https://pixspy.com/</p>
+
+    <h2>A.4 Blending Images into Mosaics</h2>
+    <p>To combine both images, I used the alpha mask I recovered from my image warping function in part A.3. The warped image would be masked using image * alpha_mask, and the non-warped image would be masked using image * (1 - alpha_mask). These masks were applied at the Laplacian levels, which is discussed below.
+
+    <br/>To reduce the edge artifacts of the individual images, I used a 2-level Laplacian stack to blend the "seam" between the left and right images. This 2-level Laplacian stack consists of:</p>
     <ul>
-        <li>Level 0: This level contains the highest frequency details. To get the laplacian at level 0, I did original_img - gaussian_blur(original_img, sigma = 4). To do the gaussian blur, I used cv2.GaussianBlur(), where the kernel size was 6 * 4 + 1 = 25, and the sigma was 4. The mask also underwent a gaussian blur with the same kernel size of 25 and sigma of 4.</li>
-        <li>Level 1: This level contains the low frequency details. Therefore, the laplacian level is just gaussian_blur(original_img, sigma = 4), with kernel size was 6 * 4 + 1 = 25. The mask was also blurred using the gaussian blur with kernel size 25 and sigma of 4.</li>
+        <li>Level 0: This level contains the highest frequency details. To get the Laplacian at level 0, I did original_img - gaussian_blur(original_img, sigma = 4). To do the gaussian blur, I used cv2.GaussianBlur(), where the kernel size was 6 * 4 + 1 = 25, and the sigma was 4. The mask also underwent a gaussian blur with the same kernel size of 25 and sigma of 4.</li>
+        <li>Level 1: This level contains the low frequency details. Therefore, the Laplacian level is just gaussian_blur(original_img, sigma = 4), with kernel size was 6 * 4 + 1 = 25. The mask was also blurred using the gaussian blur with kernel size 25 and sigma of 4.</li>
     </ul>
     
-    <p>After all this, I added together both laplacian levels of both images together to get the blended mosaic image! However, my images still had a "seam" in between them after laplacian stack blending, which I identified to be due to high-frequency noise at the edges of my image that was being captured in level 0 of my laplacian stack. To eliminate these edge artifacts, I expanded the shape of my mask by 15 pixels in both the positive and negative x and y directions. Below are the before and after comparisons:</p>
+    <p>After all this, I added together both Laplacian levels of both images together to get the blended mosaic image! However, my images still had a "seam" in between them after Laplacian stack blending, which I identified to be due to high-frequency noise at the edges of my image that was being captured in level 0 of my Laplacian stack. To eliminate these edge artifacts, I expanded the shape of my mask by 15 pixels in both the positive and negative x and y directions. Below are the before and after comparisons:</p>
 
     <div class="image-gallery">
         <div class="image-holder">
@@ -408,7 +413,7 @@
         </div>
     </div>
 
-    <p>As you can see, the "seam" is completely removed by this adjustment in the mask. Even in the laplacian level 0 image, there is no more high frequency seam after masking!
+    <p>As you can see, the "seam" is completely removed by this adjustment in the mask. Even in the Laplacian level 0 image, there is no more high frequency seam after masking!
 
     <br/>Below is the gallery of my 3 mosaics:</p>
 
@@ -496,7 +501,7 @@
         </div>
     </div>
 
-    <p>Here is the laplacian levels for my most successful mosaic: Sunset on Shattuck</p>
+    <p>Here is the Laplacian levels for my most successful mosaic: Sunset on Shattuck</p>
     <div class="image-gallery">
         <div class="image-holder">
             <h4>Laplacian Level 0</h4>
@@ -530,11 +535,11 @@
 
 
 <h3>Additional Blending I tried:</h3>
-<p>I also implemented a 2-level laplacian pyramid to test if there would be any significant improvements. This consisted of:</p>
-Level 0: This level contains the highest frequency details. I used cv2.pyrDown to downsample the image to half the size, which also gaussian blurs before downsampling. Then, I upsampled the blurred image to its original size. This allowed me to do original_image - blurred_image to get laplacian level 0.
-Level 1: This level contains the low frequency details. Therefore, the laplacian level is just the blurred image, which I got using the same procedure as in level 0. I blurred then downsampled the image to half the size and upsampled the image to the original size.
-The masks for both level 0 and 1 are the same as with the laplacian stack.
-However, I noticed no significant difference between the two. So I stuck to using my 2-level laplacian stack for all other images since it was easier for me to adjust the sigmas used, which gave me more control over blending.
+<p>I also implemented a 2-level Laplacian pyramid to test if there would be any significant improvements. This consisted of:</p>
+Level 0: This level contains the highest frequency details. I used cv2.pyrDown to downsample the image to half the size, which also gaussian blurs before downsampling. Then, I upsampled the blurred image to its original size. This allowed me to do original_image - blurred_image to get Laplacian level 0.
+Level 1: This level contains the low frequency details. Therefore, the Laplacian level is just the blurred image, which I got using the same procedure as in level 0. I blurred then downsampled the image to half the size and upsampled the image to the original size.
+The masks for both level 0 and 1 are the same as with the Laplacian stack.
+However, I noticed no significant difference between the two. So I stuck to using my 2-level Laplacian stack for all other images since it was easier for me to adjust the sigmas used, which gave me more control over blending.
 </p>
 
 <h4>Sunset on Shattuck using Laplacian Pyramid</h4>
