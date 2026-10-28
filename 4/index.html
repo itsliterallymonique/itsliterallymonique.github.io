@@ -5,6 +5,569 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-   <h1>WORK IN PROGRESS</h1>
+   <h1>PROJECT 4</h1>
+    
+    <h1>Part A: Warping Images and Making Mosaics!</h1>
+
+    <h2>A.1: The Photos</h2>
+    <p>For the subsequent parts of this task, I used the following sets of images:</p>
+    <h3>Mosaic Stitching</h3>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Wall Mural/Painting on Center Street</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/mural_img1.jpeg"/>
+                    <p>Size: 1000, 750 pixels<br/> Taken on iPhone 17</p>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/mural_img2.jpeg"/>
+                    <p>Size: 1000, 750 pixels<br/> Taken on iPhone 17</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>South Hall (Building on Campus)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/building_img1.jpeg"/>
+                    <p>Size: 1500, 1125 pixels<br/> Taken on iPhone 17</p>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/building_img2.jpeg"/>
+                    <p>Size: 1500, 1125 pixels<br/> Taken on iPhone 17</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Sunset on Shattuck</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/sunset_img1.jpeg"/>
+                    <p>Size: 1000, 750 pixels<br/> Taken on iPhone 17</p>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/sunset_img2.jpeg"/>
+                    <p>Size: 1000, 750 pixels<br/> Taken on iPhone 17</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Image Rectification</h3>
+    <h3>Mosaic Stitching</h3>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Taylor Swift: The Era's Tour Book</h4>
+            <img class="image" src="media/taylor_img1.jpeg"/>
+            <p>Size: 580, 580 pixels<br/> Taken on iPhone 17<br/> Book Measurements: 28.3 x 24.1 cm</p>
+        </div>
+        <div class="image-holder">
+            <h4>Hamilton the Musical Playbill</h4>
+            <img class="image" src="media/hamilton.jpeg"/>
+            <p>Size: 600, 800 pixels<br/> Taken on iPhone 17<br/> Playbill Measurements: 21.5 x 13.6 cm</p>
+        </div>
+    </div>
+
+    <p>I also resized the images to be under 1500 pixels x 1500 pixels to reduce compute time. I put their pixel sizes underneath the photos.</p>
+
+    <h2>A.2: Recovering Homographies between Two Images</h2>
+    <p>In order to warp images to have matching perspectives, the homography has to be identified. The homography matrix is a projective transformation matrix that will map coordinates on an image plane onto its coordinates on another image plane.
+
+    <br/>I implemented the computeH(im1_pts, im2_pts) function, which uses least squares regression to construct the homography matrix. Least squares regression tries to minimize ||Ah - b||<sup>2</sup>. Therefore, I needed to construct matrix A and b to solve for h, which is a vector of the flattened homography matrix H. 
+
+    <br/>Before constructing the matrices, I added a 3rd dimension to all coordinates in im1_pts and im2_pts, since projective transforms require 3 dimensions. The value for the 3rd dimension was simply 1. For example, coordinates (x, y) would become (x, y, 1).
+
+    <br/>Then the program constructed matrix A by creating a N * 3 x 9 matrix, where N is the number of coordinates. Each coordinate in im1_pts would have 3 rows that are of the form:
+    <br/>[[x y 1 0 0 0 0 0 0],
+    <br/>[0 0 0 x y 1 0 0 0],
+    <br/>[0 0 0 0 0 0 x y 1]]
+
+    <br/>Matrix b is a vector that consists of the flattened coordinates of the second image. This vector was N * 3, where N is the number of coordinates.
+
+    <br/>To solve for h, I used the following equation (A<sup>T</sup>A)<sup>-1</sup>A<sup>T</sup>b. Then to get H, I resized the vector to a 3x3 matrix.
+
+    <br/>Below is the gallery showing the correspondences between the images for my mosaics in part A.4, and the corresponding matrices A, b and H that my function calculated. To construct the homography matrices, I used between 8 - 12 points. To choose the best points, I identified any corners or edges that I could easily match between the two images. I also tried to space the points out around the image.
+
+    </p>
+
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Wall Mural/Painting on Center Street</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image-large" src="media/mural_img1_points.png"/>
+                    <p>Coordinates (format of [x, y]): [753,18],[629,90],[442,206],[705,52],[426,428],[858,423],[571,331],[793,238],[942,138],[932,125]</p>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image-large" src="media/mural_img2_points.png"/>
+                    <p>Coordinates (format of [x, y]): [562,165],[438,165],[220,173],[514,168],[94,378],[500,538],[292,350],[514,359],[652,335],[650,320]</p>
+                </div>
+            </div>
+            <p><b>Homography Matrix: </b>[[ 8.40751972e-01 -4.08478919e-01 -6.55168847e+01]
+ <br/>[ 4.12282364e-01  8.45488889e-01 -1.68840968e+02]
+ <br/>[-3.90312782e-18 -2.81892565e-18  1.00000000e+00]]
+
+
+            <p><b>Matrix A: </b>[[753.  18.   1 0 0 0 0 0 0.]
+ [  0 0 0. 753.  18.   1 0 0 0.]
+ [  0 0 0 0 0 0. 753.  18.   1.]
+ [629.  90 1 0 0 0 0 0 0.]
+ [  0 0 0. 629.  90 1 0 0 0.]
+ [  0 0 0 0 0 0. 629.  90 1.]
+ [442. 206.   1 0 0 0 0 0 0.]
+ [  0 0 0. 442. 206.   1 0 0 0.]
+ [  0 0 0 0 0 0. 442. 206.   1.]
+ [705.  52.   1 0 0 0 0 0 0.]
+ [  0 0 0. 705.  52.   1 0 0 0.]
+ [  0 0 0 0 0 0. 705.  52.   1.]
+ [426. 428.   1 0 0 0 0 0 0.]
+ [  0 0 0. 426. 428.   1 0 0 0.]
+ [  0 0 0 0 0 0. 426. 428.   1.]
+ [858. 423.   1 0 0 0 0 0 0.]
+ [  0 0 0. 858. 423.   1 0 0 0.]
+ [  0 0 0 0 0 0. 858. 423.   1.]
+ [571. 331 1 0 0 0 0 0 0.]
+ [  0 0 0. 571. 331 1 0 0 0.]
+ [  0 0 0 0 0 0. 571. 331 1.]
+ [793. 238.   1 0 0 0 0 0 0.]
+ [  0 0 0. 793. 238.   1 0 0 0.]
+ [  0 0 0 0 0 0. 793. 238.   1.]
+ [942. 138.   1 0 0 0 0 0 0.]
+ [  0 0 0. 942. 138.   1 0 0 0.]
+ [  0 0 0 0 0 0. 942. 138.   1.]
+ [932. 125.   1 0 0 0 0 0 0.]
+ [  0 0 0. 932. 125.   1 0 0 0.]
+ [  0 0 0 0 0 0. 932. 125.   1.]]
+
+    </p>
+    <p><b>Matrix b:</b> [562, 165, 1, 438, 165, 1, 220, 173, 1, 514, 168, 1, 94, 378, 1, 500, 538, 1, 292, 350,  1, 514, 359, 1, 652, 335, 1, 650, 320, 1]</p>
+        </div>
+        <div class="image-holder">
+            <h4>South Hall (Building on Campus)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image-large" src="media/building_img1_pts.png"/>
+                    <p>Coordinates (format of [x, y]): [811,181],[1090,136],[1141,125],[1479,199],[1142,255],[773,396],[752,691],[739,943],[1472,576],[1157,646],[1358,833],[1447,916]</p>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image-large" src="media/building_img2_points.png"/>
+                    <p>Coordinates (format of [x, y]): [331,160],[613,144],[663,139],[969,240],[662,266],[286,376],[252,683],[225,944],[952,588],[667,646],[842,825],[920,903]</p>
+                </div>
+            </div>
+            <p><b>Homography Matrix: </b>[[ 9.71071737e-01 -4.44415333e-02 -4.44201480e+02]
+ <br/>[ 3.26434999e-02  9.78168311e-01 -2.42006944e+01]
+ <br/>[ 6.50521303e-19  8.67361738e-19  1.00000000e+00]]
+
+            <p><b>Matrix A: </b>[[8.110e+02 1.810e+02 1 0 0 0 0 0 0]
+ [0 0 0 8.110e+02 1.810e+02 1 0 0 0], 
+ [0 0 0 0 0 0 8.110e+02
+  1.810e+02 1], 
+ [1.090e+03 1.360e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.090e+03 1.360e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.090e+03
+  1.360e+02 1], 
+ [1.141e+03 1.250e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.141e+03 1.250e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.141e+03
+  1.250e+02 1], 
+ [1.479e+03 1.990e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.479e+03 1.990e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.479e+03
+  1.990e+02 1], 
+ [1.142e+03 2.550e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.142e+03 2.550e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.142e+03
+  2.550e+02 1], 
+ [7.730e+02 3.960e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 7.730e+02 3.960e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 7.730e+02
+  3.960e+02 1], 
+ [7.520e+02 6.910e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 7.520e+02 6.910e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 7.520e+02
+  6.910e+02 1], 
+ [7.390e+02 9.430e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 7.390e+02 9.430e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 7.390e+02
+  9.430e+02 1], 
+ [1.472e+03 5.760e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.472e+03 5.760e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.472e+03
+  5.760e+02 1], 
+ [1.157e+03 6.460e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.157e+03 6.460e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.157e+03
+  6.460e+02 1], 
+ [1.358e+03 8.330e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.358e+03 8.330e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.358e+03
+  8.330e+02 1], 
+ [1.447e+03 9.160e+02 1 0 0 0 0
+  0 0], 
+ [0 0 0 1.447e+03 9.160e+02 1 0
+  0 0], 
+ [0 0 0 0 0 0 1.447e+03
+  9.160e+02 1]]
+
+    </p>
+    <p><b>Matrix b:</b> [331, 160, 1, 613, 144, 1, 663, 139, 1, 969, 240, 1, 662, 266, 
+   1, 286, 376, 1, 252, 683, 1, 225, 944, 1, 952, 588, 1, 667, 646, 1, 842, 825, 1, 920, 903, 1]</p>
+        </div>
+        <div class="image-holder">
+            <h4>Sunset on Shattuck</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image-large" src="media/sunset_img1_points.png"/>
+                    <p>Coordinates (format of [x, y]): [342,368],[302,541],[465,442],[695,630],[756,447],[801,495],[816,507],[932,398]</p>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image-large" src="media/sunset_img2_points.png"/>
+                    <p>Coordinates (format of [x, y]): [74,309],[26,490],[207,390],[433,579],[499,400],[541,447],[554,461],[663,359]</p>
+                </div>
+            </div>
+            <p><b>Homography Matrix: </b>[[ 1.01186939e+00 -5.14521745e-05 -2.71555472e+02]
+ <br/>[ 2.02093278e-02  9.97514136e-01 -6.08416960e+01]
+ <br/>[-4.98732999e-18 -8.67361738e-19  1.00000000e+00]]
+
+            <p><b>Matrix A: </b>[[310. 429.   1 0 0 0 0 0 0.]
+ [[342. 368.   1 0 0 0 0 0 0.]
+ [  0 0 0. 342. 368.   1 0 0 0.]
+ [  0 0 0 0 0 0. 342. 368.   1.]
+ [302. 541 1 0 0 0 0 0 0.]
+ [  0 0 0. 302. 541 1 0 0 0.]
+ [  0 0 0 0 0 0. 302. 541 1.]
+ [465. 442.   1 0 0 0 0 0 0.]
+ [  0 0 0. 465. 442.   1 0 0 0]
+ [  0 0 0 0 0 0. 465. 442.   1]
+ [695. 630 1 0 0 0 0 0 0.]
+ [  0 0 0. 695. 630 1 0 0 0.]
+ [  0 0 0 0 0 0. 695. 630 1.]
+ [756. 447.   1 0 0 0 0 0 0.]
+ [  0 0 0. 756. 447.   1 0 0 0]
+ [  0 0 0 0 0 0. 756. 447.   1]
+ [801. 495.   1 0 0 0 0 0 0.]
+ [  0 0 0. 801. 495.   1 0 0 0.]
+ [  0 0 0 0 0 0. 801. 495.   1.]
+ [816. 507.   1 0 0 0 0 0 0.]
+ [  0 0 0. 816. 507.   1 0 0 0.]
+ [  0 0 0 0 0 0. 816. 507.   1.]
+ [932. 398.   1 0 0 0 0 0 0.]
+ [  0 0 0. 932. 398.   1 0 0 0.]
+ [  0 0 0 0 0 0. 932. 398.   1.]]
+
+    </p>
+    <p><b>Matrix b:</b> [74, 309, 1, 26, 490, 1, 207, 390, 1, 433, 579, 1, 499, 400, 1, 541, 447, 1, 554, 461, 1, 663, 359, 1]
+</p>
+        </div>
+    </div>
+    
+    <h2>A.3: Interpolation</h2>
+    <p>I attempted to rectify an image of my "Taylor Swift: the Era's Tour" book and a playbill of "Hamilton". I took images of both items at an angle so that they don't look rectangular in the image. To rectify the images and make them rectangular, I measured the dimensions of these items and used these to identify the target points to create the homography matrix that will be used to warp my images.
+        <br/>Below are the results and coordinates I used:
+    </p>
+
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Taylor Swift: The Era's Tour Book</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Original</b></p>
+                    <img class="image" src="media/taylor_img1.jpeg"/>
+                    <p>Coordinates (format of [x, y]): [228, 30], [556, 135], [33, 410], [420, 566]</p>
+                </div>
+                <div class="compare">
+                    <p><b>Nearest Neighbor Interpolation</b></p>
+                    <img class="image" src="media/warped_nn_taylor_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Bilinear Interpolation</b></p>
+                    <img class="image" src="media/warped_bilinear_taylor_img1.jpeg"/>
+                </div>
+            </div>
+            <p><b>Rectangular Target Coordinates (format of [x, y]): </b>[0, 0], [482, 0], [0, 566], [482, 566]</p>
+            <p><b>Homography Matrix: </b>[[ 1.16361527e+00  4.71302030e-01 -2.53286925e+02], 
+ <br/>[-4.47201523e-01  1.21190665e+00  7.56006985e+01], 
+ <br/>[-8.67361738e-19  0.00000000e+00  1.00000000e+00]]
+
+
+            <p><b>Matrix A: </b>[[0, 0], [482, 0], [0, 566], [482, 566]], 
+[[228.  30 1 0 0 0 0 0 0.], 
+ [  0 0 0. 228.  30 1 0 0 0.], 
+ [  0 0 0 0 0 0. 228.  30 1.], 
+ [556. 135.   1 0 0 0 0 0 0.], 
+ [  0 0 0. 556. 135.   1 0 0 0.], 
+ [  0 0 0 0 0 0. 556. 135.   1], 
+ [ 33. 410 1 0 0 0 0 0 0.], 
+ [  0 0 0.  33. 410 1 0 0 0.], 
+ [  0 0 0 0 0 0.  33. 410 1], 
+ [420. 566.   1 0 0 0 0 0 0.], 
+ [  0 0 0. 420. 566.   1 0 0 0.], 
+ [  0 0 0 0 0 0. 420. 566.   1]]
+
+
+    </p>
+    <p><b>Matrix b: </b>[0, 0, 1, 482, 0, 1, 0, 566, 1, 482, 566, 1]</p>
+        </div>
+        <div class="image-holder">
+            <h4>Hamilton The Musical Playbill</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Original</b></p>
+                    <img class="image" src="media/hamilton.jpeg"/>
+                    <p>Coordinates (format of [x, y]): [423, 81], [576, 307], [36, 305], [255, 594]</p>
+                </div>
+                <div class="compare">
+                    <p><b>Nearest Neighbor Interpolation</b></p>
+                    <img class="image" src="media/warped_bilinear_hamilton.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Bilinear Interpolation</b></p>
+                    <img class="image" src="media/warped_nn_hamilton.jpeg"/>
+                </div>
+            </div>
+            <p><b>Rectangular Target Coordinates (format of [x, y]): </b>[0, 0], [544, 0], [0, 860], [544, 860]</p>
+            <p><b>Homography Matrix: </b>[[ 9.80017126e-01  1.36343842e+00 -4.82741833e+02], 
+                <br/>[-1.59212595e+00  1.15883482e+00  5.70605515e+02], 
+                <br/>[ 1.30104261e-18  4.33680869e-19  1.00000000e+00]]
+
+            <p><b>Matrix A: </b>[[423.  81 1 0 0 0 0 0 0.], 
+                [  0 0 0. 423.  81 1 0 0 0.], 
+                [  0 0 0 0 0 0. 423.  81 1.], 
+ [576. 307.   1 0 0 0 0 0 0.], 
+ [  0 0 0. 576. 307.   1 0 0 0], 
+ [  0 0 0 0 0 0. 576. 307.   1], 
+ [ 36. 305.   1 0 0 0 0 0 0.], 
+ [  0 0 0.  36. 305.   1 0 0 0], 
+ [  0 0 0 0 0 0.  36. 305.   1], 
+ [255. 594.   1 0 0 0 0 0 0], 
+ [  0 0 0. 255. 594.   1 0 0 0], 
+ [  0 0 0 0 0 0. 255. 594.   1]]
+
+    </p>
+    <p><b>Matrix b:</b> [0, 0, 1, 544, 0, 1, 0, 860, 1, 544, 860, 1]</p>
+        </div>
+    </div>
+
+    <h2>A.4 Blending Images into Mosaics</h2>
+    <p>To combine both images, I used the alpha mask I recovered from my image warping function in part A.3. The warped image would be masked using image * alpha_mask, and the non-warped image would be masked using image * (1 - alpha_mask). These masks were applied at the laplacian levels, which is discussed below.
+
+    <br/>To reduce the edge artifacts of the individual images, I used a 2-level laplacian stack to blend the "seam" between the left and right images. This 2-level laplacian stack consists of:</p>
+    <ul>
+        <li>Level 0: This level contains the highest frequency details. To get the laplacian at level 0, I did original_img - gaussian_blur(original_img, sigma = 4). To do the gaussian blur, I used cv2.GaussianBlur(), where the kernel size was 6 * 4 + 1 = 25, and the sigma was 4. The mask also underwent a gaussian blur with the same kernel size of 25 and sigma of 4.</li>
+        <li>Level 1: This level contains the low frequency details. Therefore, the laplacian level is just gaussian_blur(original_img, sigma = 4), with kernel size was 6 * 4 + 1 = 25. The mask was also blurred using the gaussian blur with kernel size 25 and sigma of 4.</li>
+    </ul>
+    
+    <p>After all this, I added together both laplacian levels of both images together to get the blended mosaic image! However, my images still had a "seam" in between them after laplacian stack blending, which I identified to be due to high-frequency noise at the edges of my image that was being captured in level 0 of my laplacian stack. To eliminate these edge artifacts, I expanded the shape of my mask by 15 pixels in both the positive and negative x and y directions. Below are the before and after comparisons:</p>
+
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Before and After for Mosaic of South Hall</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Mosaic Before Expanding the Mask</b></p>
+                    <img class="image" src="media/building_mosaic_left_center_failed.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Mosaic After Expanding the Mask</b></p>
+                    <img class="image" src="media/building_mosaic_left_center.jpg"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p>As you can see, the "seam" is completely removed by this adjustment in the mask. Even in the laplacian level 0 image, there is no more high frequency seam after masking!
+
+    <br/>Below is the gallery of my 3 mosaics:</p>
+
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Mosaic of Sunset on Shattuck</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/sunset_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/sunset_img2.jpeg"/>
+                </div>
+            </div>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Warped Image</b></p>
+                    <img class="image" src="media/warped_part_A4_left_sunsetleft.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Alpha Mask</b></p>
+                    <img class="image" src="media/sunsetleftalpha_mask_after.jpg"/>
+                </div>
+            </div>
+            <div class="compare">
+                <p><b>Completed Image Mosaic</b></p>
+                <img class="image-large" src="media/sunset_mosaic_left_center.jpg"/>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Mosaic of South Hall</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/building_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/building_img2.jpeg"/>
+                </div>
+            </div>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Warped Image</b></p>
+                    <img class="image" src="media/warped_part_A4_left_buildingleft.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Alpha Mask</b></p>
+                    <img class="image" src="media/buildingleftalpha_mask_after.jpg"/>
+                </div>
+            </div>
+            <div class="compare">
+                <p><b>Completed Image Mosaic</b></p>
+                <img class="image-large" src="media/building_mosaic_left_center.jpg"/>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Mosaic of Mural/Painting on Center Street</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/mural_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/mural_img2.jpeg"/>
+                </div>
+            </div>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Warped Image</b></p>
+                    <img class="image" src="media/warped_part_A4_left_muralleft.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Alpha Mask</b></p>
+                    <img class="image" src="media/muralleftalpha_mask_after.jpg"/>
+                </div>
+            </div>
+            <div class="compare">
+                <p><b>Completed Image Mosaic</b></p>
+                <img class="image-large" src="media/mural_mosaic_left_center.jpg"/>
+            </div>
+        </div>
+    </div>
+
+    <p>Here is the laplacian levels for my most successful mosaic: Sunset on Shattuck</p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Laplacian Level 0</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/sunsetleft1_level0.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/sunsetleft2_level0.jpg"/>
+                </div>
+            </div>
+            <h4>Laplacian Level 1</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/sunsetleft1_level1.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/sunsetleft2_level1.jpg"/>
+                </div>
+            </div>
+            <div class="compare">
+                <p><b>Completed Image Mosaic</b></p>
+                <img class="image" src="media/sunset_mosaic_left_center.jpg"/>
+            </div>
+    </div>
+    </div>
+
+
+<h3>Additional Blending I tried:</h3>
+<p>I also implemented a 2-level laplacian pyramid to test if there would be any significant improvements. This consisted of:</p>
+Level 0: This level contains the highest frequency details. I used cv2.pyrDown to downsample the image to half the size, which also gaussian blurs before downsampling. Then, I upsampled the blurred image to its original size. This allowed me to do original_image - blurred_image to get laplacian level 0.
+Level 1: This level contains the low frequency details. Therefore, the laplacian level is just the blurred image, which I got using the same procedure as in level 0. I blurred then downsampled the image to half the size and upsampled the image to the original size.
+The masks for both level 0 and 1 are the same as with the laplacian stack.
+However, I noticed no significant difference between the two. So I stuck to using my 2-level laplacian stack for all other images since it was easier for me to adjust the sigmas used, which gave me more control over blending.
+</p>
+
+<h4>Sunset on Shattuck using Laplacian Pyramid</h4>
+<div class="image-gallery">
+        <div class="image-holder">
+            <h4>Laplacian Level 0</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/sunsetleft1_level0_pyramid.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/sunsetleft2_level0_pyramid.jpg"/>
+                </div>
+            </div>
+            <h4>Laplacian Level 1</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Left Image</b></p>
+                    <img class="image" src="media/sunsetleft1_level1_pyramid.jpg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Right Image</b></p>
+                    <img class="image" src="media/sunsetleft2_level1_pyramid.jpg"/>
+                </div>
+            </div>
+            <div class="compare">
+                <p><b>Completed Image Mosaic</b></p>
+                <img class="image" src="media/sunset_mosaic_left_center_pyramid.jpg"/>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
