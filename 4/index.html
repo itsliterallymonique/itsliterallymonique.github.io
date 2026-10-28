@@ -536,9 +536,10 @@
 
 <h3>Additional Blending I tried:</h3>
 <p>I also implemented a 2-level Laplacian pyramid to test if there would be any significant improvements. This consisted of:</p>
-Level 0: This level contains the highest frequency details. I used cv2.pyrDown to downsample the image to half the size, which also gaussian blurs before downsampling. Then, I upsampled the blurred image to its original size. This allowed me to do original_image - blurred_image to get Laplacian level 0.
-Level 1: This level contains the low frequency details. Therefore, the Laplacian level is just the blurred image, which I got using the same procedure as in level 0. I blurred then downsampled the image to half the size and upsampled the image to the original size.
-The masks for both level 0 and 1 are the same as with the Laplacian stack.
+<ul><li>Level 0: This level contains the highest frequency details. I used cv2.pyrDown to downsample the image to half the size, which also gaussian blurs before downsampling. Then, I upsampled the blurred image to its original size. This allowed me to do original_image - blurred_image to get Laplacian level 0.</li>
+<li>Level 1: This level contains the low frequency details. Therefore, the Laplacian level is just the blurred image, which I got using the same procedure as in level 0. I blurred then downsampled the image to half the size and upsampled the image to the original size.</li>
+</ul>
+<p>The masks for both level 0 and 1 are the same as with the Laplacian stack.
 However, I noticed no significant difference between the two. So I stuck to using my 2-level Laplacian stack for all other images since it was easier for me to adjust the sigmas used, which gave me more control over blending.
 </p>
 
