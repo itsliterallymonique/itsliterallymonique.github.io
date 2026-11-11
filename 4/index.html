@@ -636,7 +636,7 @@ However, I noticed no significant difference between the two. So I stuck to usin
         </div>
     </div>
 
-    <p>Then, I implemented Adaptive Non-Maximal Suppression that was described in the paper. The aim of this step was to identify Harris Corners that are deemed to be important and spatially distributed around the image. 
+    <p>Then, I implemented Adaptive Non-Maximal Suppression that was described in the paper. The aim of this step was to identify Harris Corners that are deemed to be important and spatially distributed around the image.
     <br/>According to the paper, the best parameters were c_robust = 0.9 and interest_points = 500. Using these parameters, here are the points for the images:</p>
     <p><i>* the feature points selected by ANMS are the dots in yellow</i></p>
     <div class="image-gallery">
@@ -681,7 +681,7 @@ However, I noticed no significant difference between the two. So I stuck to usin
         </div>
     </div>
     <h2>B.2: Extracting Feature Descriptors</h2>
-    <p>For the 500 detected points of the image, I had to extract 8x8 feature descriptors. This creates a "description" of the area surrounding the point that I can use for feature matching between two images. To extract these feature descriptors, I downsampled the image using a gaussian blur of sigma = 5 and kernel size = (5*6+1, 5*6+1) then resized the image using cv2.resize() to be 5 times smaller. Afterwards, I extracted the 8x8 pixel space, with the feature point in the center. Since I downsized the image to 1/5 the size, the feature was extracted from the 40 x 40 pixel space in the original image.
+    <p>For the 500 detected points of the image, I had to extract 8x8 feature descriptors. This creates a "description" of the area surrounding the point that I can use for feature matching between two images. To extract these feature descriptors, I downsampled the image using a gaussian blur of sigma = 5 and kernel size = (5*6+1, 5*6+1) then resized the image using cv2.resize() to be 5 times smaller. Afterwards, I extracted the 8x8 pixel space, with the feature point in the center. Since I downsized the image to 1/5 the size, the feature was extracted from the 40 x 40 pixel space in the original image. The feature descriptors were then normalized using bias/gain normalization ((img - mean(img) / std(img)))
     <br/>Below are feature descriptors from the two images I used to construct my mosaic of South Hall Building:
     </p>
     <div class="image-gallery">
@@ -762,7 +762,7 @@ However, I noticed no significant difference between the two. So I stuck to usin
     </div>
 
     <h2>B.3: Feature Matching</h2>
-    <p>Based on section 5.1, I implemented a feature matching function that matches the points selected by ANMS (part B.1) between images based on the extracted feature descriptors (part B.2). The matching features were determined using nearest neighbors. I used Lowe's technique to identify whether the "matched" features were correct matches. For each matched feature I computed the ratio of 1-NN/2-NNavg. Where 2-NNavg was calculated from the average distance to the second nearest neighbor (2-NN). My program determined the features "matched" if the ratio was less than a specific threshold, which I determined to be 0.15. Although the paper shows that a threshold of 0.1 would be the most effective, I found that it was too restrictive. When I used a threshold of 0.1, there were not enough points to determine the homography matrix using least squares. Therefore, I increased it to 0.3, which I found provided the optimal matched features.
+    <p>Based on section 5.1, I implemented a feature matching function that matches the points selected by ANMS (part B.1) between images based on the extracted feature descriptors (part B.2). The matching features were determined using nearest neighbors. I used Lowe's technique to identify whether the "matched" features were correct matches. For each matched feature I computed the ratio of 1-NN/2-NNavg, where 1-NN is the distance between image 1 features and the nearest feature on image 2. Where 2-NNavg was the average distance to the second nearest neighbor for all features in image 1(2-NN). My program determined the features "matched" if the ratio was less than a specific threshold, which I determined to be 0.3. Although the paper shows that a threshold of 0.1 would be the most effective, I found that it was too restrictive. When I used a threshold of 0.1, there were not enough points to determine the homography matrix using least squares. Therefore, I increased it to 0.3, which I found provided the optimal matched features.
 
     <br/>Below are the selected matched features between the images for the mosaics I crafted for part B.4:
     </p>
