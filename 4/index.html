@@ -577,5 +577,805 @@ However, I noticed no significant difference between the two. So I stuck to usin
         </div>
     </div>
 
+    <br/>
+    <br/>
+
+
+    <h1>Part B: Feature Matching & Autostitching</h1>
+
+    <p>All images were resized to be 1000 x 1000 px prior to running my program in order to reduce computing time when running the algorithm!</p>
+
+    <h2>B.1: Harris Corner Detection</h2>
+    <p>I used the sample code provided to identify the Harris Corners of the images. Below is the gallery of the Harris Corners of the images prior to implementing ANMS:</p>
+    <p><i>* the harris corner points are the dots in yellow</i></p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Harris Corners of South Hall Building Images</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/harris_cornersbuilding_img1.jpeg"/>
+                    <p><b>Total Number of Feature Points:</b> 16470</p>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/harris_cornersbuilding_img2.jpeg"/>
+                    <p><b>Total Number of Feature Points:</b> 15703</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Harris Corners of Valley Life Sciences Building Images</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/harris_cornersVLSB_img1.jpeg"/>
+                    <p><b>Total Number of Feature Points:</b> 16077</p>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/harris_cornersVLSB_img2.jpeg"/>
+                    <p><b>Total Number of Feature Points:</b> 15643</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Harris Corners of Giannini Hall Images</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/harris_cornersgianini_img1.jpeg"/>
+                    <p><b>Total Number of Feature Points:</b> 18077</p>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/harris_cornersgianini_img2.jpeg"/>
+                    <p><b>Total Number of Feature Points:</b> 18344</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p>Then, I implemented Adaptive Non-Maximal Suppression that was described in the paper. The aim of this step was to identify Harris Corners that are deemed to be important and spatially distributed around the image. 
+    <br/>According to the paper, the best parameters were c_robust = 0.9 and interest_points = 500. Using these parameters, here are the points for the images:</p>
+    <p><i>* the feature points selected by ANMS are the dots in yellow</i></p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Harris Corners of South Hall Building Images with ANMS (500 feature points)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/harris_corners_anmsbuilding_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/harris_corners_anmsbuilding_img2.jpeg"/>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Harris Corners of Valley Life Sciences Building Images with ANMS (500 feature points)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/harris_corners_anmsVLSB_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/harris_corners_anmsVLSB_img2.jpeg"/>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Harris Corners of Giannini Hall Images with ANMS (500 feature points)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/harris_corners_anmsgianini_img1.jpeg"/>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/harris_corners_anmsgianini_img2.jpeg"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2>B.2: Extracting Feature Descriptors</h2>
+    <p>For the 500 detected points of the image, I had to extract 8x8 feature descriptors. This creates a "description" of the area surrounding the point that I can use for feature matching between two images. To extract these feature descriptors, I downsampled the image using a gaussian blur of sigma = 5 and kernel size = (5*6+1, 5*6+1) then resized the image using cv2.resize() to be 5 times smaller. Afterwards, I extracted the 8x8 pixel space, with the feature point in the center. Since I downsized the image to 1/5 the size, the feature was extracted from the 40 x 40 pixel space in the original image.
+    <br/>Below are feature descriptors from the two images I used to construct my mosaic of South Hall Building:
+    </p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Feature Vectors from South Hall Image 1</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x373.39523296367884_y418.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (373.4, 418)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x373.39523296367884_y418.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (374.8, 416)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x374.7692623468472_y416.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (375.0, 781)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x374.97333238511777_y781.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (385.3, 798)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x449.92888326934514_y520.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (450.0, 520)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x457.90064424501526_y522.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (458.0, 522)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x752.3888622248471_y973.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (752.4, 973)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x765.799582136214_y961.0building_img1.jpeg"/>
+                    <p><b>Coordinates:</b> (765.8, 961)</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Feature Vectors from South Hall Image 2</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x170.48753620133056_y908.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (170.5, 908)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x171.0204666114556_y791.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (171.0, 791)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x187.0320828093405_y774.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (187.0, 774)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x200.89798406156294_y600.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (200.9, 600)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x207.45360927204905_y840.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (207.5, 840)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x214.04905979704745_y412.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (214.0, 412)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x214.28252378577213_y248.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (214.3, 248)</p>
+                </div>
+                <div class="compare">
+                    <img class="image" src="media/partb/feature_vec_x222.05629916757596_y372.0building_img2.jpeg"/>
+                    <p><b>Coordinates:</b> (222.1, 372)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>B.3: Feature Matching</h2>
+    <p>Based on section 5.1, I implemented a feature matching function that matches the points selected by ANMS (part B.1) between images based on the extracted feature descriptors (part B.2). The matching features were determined using nearest neighbors. I used Lowe's technique to identify whether the "matched" features were correct matches. For each matched feature I computed the ratio of 1-NN/2-NNavg. Where 2-NNavg was calculated from the average distance to the second nearest neighbor (2-NN). My program determined the features "matched" if the ratio was less than a specific threshold, which I determined to be 0.15. Although the paper shows that a threshold of 0.1 would be the most effective, I found that it was too restrictive. When I used a threshold of 0.1, there were not enough points to determine the homography matrix using least squares. Therefore, I increased it to 0.3, which I found provided the optimal matched features.
+
+    <br/>Below are the selected matched features between the images for the mosaics I crafted for part B.4:
+    </p>
+    <p><i>* the feature points are the dots in yellow</i></p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Selected Matched Features between South Hall Building Images (57 matched features)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/matched_feat_building_img1.jpeg"/>
+                    <p><b>Feature Coordinates:</b> [[946.,504.], [451.,360.], [672.,307.], [818.,250.],
+ [750.,183.],
+ [413.,491.],
+ [874.,243.],
+ [845.,247.],
+ [738.,262.],
+ [534.,425.],
+ [843.,325.],
+ [484.,297.],
+ [774.,295.],
+ [729.,328.],
+ [764.,563.],
+ [757.,105.],
+ [848.,165.],
+ [726.,412.],
+ [619.,275.],
+ [886.,285.],
+ [383.,461.],
+ [696.,266.],
+ [763.,361.],
+ [891.,281.],
+ [688.,269.],
+ [844.,153.],
+ [962.,232.],
+ [540.,304.],
+ [701.,268.],
+ [652.,275.],
+ [829., 47.],
+ [606.,281.],
+ [763.,333.],
+ [574.,286.],
+ [770., 44.],
+ [747., 43.],
+ [569.,607.],
+ [948.,463.],
+ [514.,261.],
+ [857., 86.],
+ [765.,333.],
+ [447.,330.],
+ [398.,216.],
+ [772., 47.],
+ [511.,232.],
+ [900., 37.],
+ [624.,386.],
+ [763.,403.],
+ [574., 80.],
+ [791.,254.],
+ [764.,258.],
+ [635.,233.],
+ [945., 32.],
+ [736., 45.],
+ [724.,374.],
+ [664.,271.],
+ [692., 30.]]</p>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/matched_feat_building_img2.jpeg"/>
+                    <p><b>Feature Coordinates:</b> [[600.,503.],
+ [115.,347.],
+ [621.,289.],
+ [760.,241.],
+ [431.,189.],
+ [ 67.,485.],
+ [649.,248.],
+ [467.,261.],
+ [393.,266.],
+ [202.,424.],
+ [513.,332.],
+ [154.,283.],
+ [447.,303.],
+ [513.,323.],
+ [431.,558.],
+ [439.,116.],
+ [522.,180.],
+ [401.,411.],
+ [492.,259.],
+ [553.,296.],
+ [ 34.,453.],
+ [377.,266.],
+ [438.,363.],
+ [557.,293.],
+ [492.,259.],
+ [519.,168.],
+ [818.,238.],
+ [216.,293.],
+ [382.,268.],
+ [283.,276.],
+ [710., 34.],
+ [283.,276.],
+ [438.,336.],
+ [252.,278.],
+ [880., 23.],
+ [543., 71.],
+ [233.,606.],
+ [603.,464.],
+ [189.,248.],
+ [928., 66.],
+ [441.,336.],
+ [111.,316.],
+ [ 62.,185.],
+ [688., 23.],
+ [186.,217.],
+ [710., 34.],
+ [686.,363.],
+ [437.,403.],
+ [710., 34.],
+ [442.,263.],
+ [442.,263.],
+ [318.,229.],
+ [928., 29.],
+ [639., 43.],
+ [802.,345.],
+ [393.,266.],
+ [543., 71.]]
+</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Selected Matched Features between Valley Life Sciences Building Images (66 matched features)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/matched_feat_vlsb_img1.jpeg"/>
+                    <p><b>Feature Coordinates:</b> [[864., 38.],
+ [749., 93.],
+ [651.,140.],
+ [567.,180.],
+ [888.,213.],
+ [765.,255.],
+ [662.,465.],
+ [573.,562.],
+ [866.,535.],
+ [967.,337.],
+ [821.,368.],
+ [191., 57.],
+ [825.,459.],
+ [576.,320.],
+ [432.,440.],
+ [964.,268.],
+ [422.,627.],
+ [572.,429.],
+ [662.,617.],
+ [420.,627.],
+ [877.,271.],
+ [901.,579.],
+ [805.,221.],
+ [499.,392.],
+ [708.,112.],
+ [823.,532.],
+ [551.,380.],
+ [573.,367.],
+ [663.,290.],
+ [606.,293.],
+ [612.,559.],
+ [616.,156.],
+ [821.,316.],
+ [491.,594.],
+ [896.,495.],
+ [969.,372.],
+ [810.,620.],
+ [968.,473.],
+ [823.,455.],
+ [617.,422.],
+ [807.,580.],
+ [572.,595.],
+ [693.,279.],
+ [880.,388.],
+ [863.,705.],
+ [711.,484.],
+ [823.,401.],
+ [824.,430.],
+ [826.,488.],
+ [598.,632.],
+ [764.,349.],
+ [602.,311.],
+ [764.,376.],
+ [717.,441.],
+ [570.,532.],
+ [720.,645.],
+ [695.,626.],
+ [766.,513.],
+ [720.,648.],
+ [615.,521.],
+ [491.,569.],
+ [824.,105.],
+ [535.,399.],
+ [934.,295.],
+ [712.,478.],
+ [706.,366.]]
+</p>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/matched_feat_vlsb_img2.jpeg"/>
+                    <p><b>Feature Coordinates:</b> [[404.,108.],
+ [404.,108.],
+ [218.,175.],
+ [642., 21.],
+ [528.,238.],
+ [310.,295.],
+ [820.,244.],
+ [402.,546.],
+ [491.,545.],
+ [735.,334.],
+ [457.,470.],
+ [ 72., 34.],
+ [460.,386.],
+ [137.,340.],
+ [660.,349.],
+ [593.,296.],
+ [ 33.,632.],
+ [408.,357.],
+ [396.,617.],
+ [ 33.,632.],
+ [513.,376.],
+ [521.,588.],
+ [452.,240.],
+ [408.,357.],
+ [363.,123.],
+ [242.,564.],
+ [465.,512.],
+ [408.,357.],
+ [528.,238.],
+ [ 91.,338.],
+ [242.,564.],
+ [186.,186.],
+ [460.,355.],
+ [521.,477.],
+ [821.,285.],
+ [593.,393.],
+ [321.,633.],
+ [457.,470.],
+ [459.,383.],
+ [457.,470.],
+ [433.,587.],
+ [198.,602.],
+ [447.,259.],
+ [818.,513.],
+ [478.,711.],
+ [462.,332.],
+ [458.,442.],
+ [457.,438.],
+ [460.,355.],
+ [222.,639.],
+ [398.,521.],
+ [247.,311.],
+ [398.,521.],
+ [363.,319.],
+ [520.,507.],
+ [345.,651.],
+ [321.,633.],
+ [823.,359.],
+ [345.,651.],
+ [460.,355.],
+ [408.,357.],
+ [734.,300.],
+ [346.,434.],
+ [887.,552.],
+ [462.,332.],
+ [459.,383.]]
+</p>
+                </div>
+            </div>
+        </div>
+        <div class="image-holder">
+            <h4>Selected Matched Features between Giannini Hall Images (53 matched features)</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Image 1 (left)</b></p>
+                    <img class="image-large" src="media/partb/matched_feat_gianini_img1.jpeg"/>
+                    <p><b>Feature Coordinates:</b> [[912.,544.],
+ [ 46., 24.],
+ [920.,368.],
+ [526.,372.],
+ [ 39., 79.],
+ [539., 61.],
+ [140., 32.],
+ [961.,267.],
+ [143., 32.],
+ [911.,201.],
+ [636.,456.],
+ [753.,247.],
+ [ 74., 57.],
+ [289., 47.],
+ [523.,203.],
+ [537.,204.],
+ [804.,556.],
+ [189., 24.],
+ [191., 23.],
+ [184., 26.],
+ [251., 47.],
+ [456.,533.],
+ [ 77., 33.],
+ [372.,285.],
+ [220., 41.],
+ [688.,684.],
+ [866.,311.],
+ [193., 26.],
+ [ 74., 33.],
+ [193., 58.],
+ [401.,285.],
+ [608.,470.],
+ [584.,240.],
+ [525.,278.],
+ [240., 22.],
+ [170., 36.],
+ [910.,174.],
+ [274., 23.],
+ [102., 80.],
+ [922.,394.],
+ [191., 32.],
+ [ 39., 53.],
+ [100., 82.],
+ [700.,463.],
+ [103., 58.],
+ [102., 33.],
+ [369.,153.],
+ [921.,469.],
+ [823.,517.],
+ [112., 54.],
+ [577.,370.],
+ [104., 56.],
+ [661.,501.]]
+</p>
+                </div>
+                <div class="compare">
+                    <p><b>Image 2 (right)</b></p>
+                    <img class="image-large" src="media/partb/matched_feat_gianini_img2.jpeg"/>
+                    <p><b>Feature Coordinates:</b> [[576.,534.],
+ [904., 41.],
+ [591.,371.],
+ [211.,356.],
+ [974., 29.],
+ [238., 36.],
+ [846., 28.],
+ [631.,279.],
+ [846., 28.],
+ [590.,214.],
+ [323.,447.],
+ [446.,246.],
+ [974., 29.],
+ [956., 54.],
+ [214.,180.],
+ [229.,183.],
+ [478.,546.],
+ [915., 64.],
+ [915., 64.],
+ [974., 29.],
+ [956., 54.],
+ [125.,524.],
+ [976., 79.],
+ [ 40.,255.],
+ [947., 47.],
+ [358.,674.],
+ [546.,315.],
+ [974., 29.],
+ [976., 79.],
+ [915., 64.],
+ [246.,262.],
+ [294.,460.],
+ [278.,225.],
+ [215.,258.],
+ [927., 21.],
+ [846., 28.],
+ [591.,189.],
+ [935., 23.],
+ [959.,110.],
+ [592.,395.],
+ [912.,113.], [880., 54.], [959.,110.], [386.,455.], [959.,110.], [846., 28.], [ 44.,112.], [413., 45.], [500.,508.], [935., 23.], [267.,358.], [959.,110.], [345.,492.]]
+</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>B.4: RANSAC Algorithm and Final Mosaics</h2>
+    <p>To find the inliers to create the homography matrix to stitch the images into a mosaic, I coded a 4-point RANSAC function, which takes in the feature-matched coordinates between the two images and returns a homography matrix.
+        <br/>In my RANSAC algorithm, I iterated through the following steps 1000 times:</p>
+    <ul>
+        <li>Select 4 random features in the images (for reproducibility, I set the seed to 200)</li>
+        <li>Calculate the homography using these 4 features that will go from image 1 to image 2</li>
+        <li>Identify which of the features are "inliers". Inliers are coordinates where the L2 distance between the target point on image 2 and the point calculated by the homography is less than a threshold. I used the threshold of 10.</li>
+        <li>If the number of inliers is greater than the existing maximum number of inliers, keep these new selected inliers.</li>
+        <li>Afterwards, I computed the homography based on the maximum number of inliers and returned this homography.</li>
+    </ul>
+
+    <p>Below is a gallery of image visualizations of the inliers that were chosen for each image</p>
+
+    <p><i>* the inlier points are in red, and the estimated points from image 1 onto image 2 using the homography matrix are in yellow</i></p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <p><b>Inliers of South Hall Building Images (on image 2)</b></p>
+            <img class="image-large" src="media/partb/inliers_building_img1.jpeg"/>
+            <p><b>Inlier Coordinates on Image 2:</b>  [[600.,503.],
+ [115.,347.],
+ [431.,189.],
+ [513.,332.],
+ [154.,283.],
+ [447.,303.],
+ [439.,116.],
+ [522.,180.],
+ [553.,296.],
+ [377.,266.],
+ [438.,363.],
+ [557.,293.],
+ [519.,168.],
+ [216.,293.],
+ [382.,268.],
+ [283.,276.],
+ [438.,336.],
+ [252.,278.],
+ [603.,464.],
+ [189.,248.],
+ [441.,336.],
+ [111.,316.],
+ [186.,217.],
+ [437.,403.],
+ [442.,263.],
+ [318.,229.]]
+</p>
+            <p><b>Estimated Image 1 Coordinates on Image 2 using Homography Matrix: </b>[[604.52905549,507.28686412],
+ [122.03658425,342.11374786],
+ [429.10912835,190.40448977],
+ [512.95451332,330.93902463],
+ [158.50063413,283.96338989],
+ [446.2856768 ,298.45774403],
+ [440.67036848,116.49417062],
+ [527.38620617,178.79885901],
+ [557.97651367,295.26496597],
+ [370.63005527,266.42015232],
+ [431.46701513,360.71014239],
+ [563.17308147,291.73714544],
+ [524.12878463,167.14093822],
+ [213.63565833,293.79871971],
+ [375.47142595,268.60819122],
+ [280.46620755,275.62025724],
+ [433.12460167,334.03613173],
+ [248.42768376,278.57385791],
+ [608.94014368,468.34159235],
+ [190.39043514,251.36474788],
+ [435.10850956,334.1492327 ],
+ [119.84475407,313.30824879],
+ [189.13135938,223.56844253],
+ [428.9806353 ,400.72115837],
+ [438.55651959,262.64443939],
+ [312.07444886,231.53334589]]</p>
+        </div>
+        <div class="image-holder">
+            <p><b>Inliers of Valley Life Sciences Building Images (on image 2)</b></p>
+            <img class="image-large" src="media/partb/inliers_VLSB_img1.jpeg"/>
+            <p><b>Inlier Coordinates on Image 2:</b> [[404.,108.],
+ [491.,545.],
+ [ 33.,632.],
+ [ 33.,632.],
+ [521.,588.],
+ [452.,240.],
+ [363.,123.],
+ [242.,564.],
+ [433.,587.],
+ [198.,602.],
+ [478.,711.],
+ [457.,438.],
+ [222.,639.],
+ [247.,311.],
+ [345.,651.],
+ [321.,633.],
+ [345.,651.]]
+</p>
+            <p><b>Estimated Image 1 Coordinates on Image 2 using Homography Matrix:</b> [[405.00201069,106.13713334],
+ [494.59697134,543.99019929],
+ [ 41.32146255,630.21516804],
+ [ 39.30621212,630.19419296],
+ [527.0469391 ,587.82229715],
+ [453.23436154,233.16817089],
+ [362.4729818 ,124.47613634],
+ [237.12366743,565.03456546],
+ [432.26614798,587.82431041],
+ [194.5139103 ,600.17736462],
+ [480.69056121,711.89182291],
+ [458.99889532,439.82634598],
+ [218.34339666,637.00018286],
+ [242.92457145,319.94495254],
+ [340.44140275,651.12160419],
+ [316.46716738,632.09042379],
+ [340.24934038,654.08512924]]
+</p>
+        </div>
+        <div class="image-holder">
+            <p><b>Inliers of Giannini Building Images (on image 2)</b></p>
+            <img class="image-large" src="media/partb/inliers_gianini_img1.jpeg"/>
+            <p><b>Inlier Coordinates on Image 2:</b> [[576.,534.],
+ [591.,371.],
+ [211.,356.],
+ [238., 36.],
+ [631.,279.],
+ [323.,447.],
+ [446.,246.],
+ [214.,180.],
+ [229.,183.],
+ [478.,546.],
+ [358.,674.],
+ [546.,315.],
+ [294.,460.],
+ [278.,225.],
+ [215.,258.],
+ [592.,395.],
+ [386.,455.],
+ [500.,508.],
+ [267.,358.],
+ [345.,492.]]</p>
+            <p><b>Estimated Image 1 Coordinates on Image 2 using Homography Matrix:</b> [[580.75387054,545.30496907],
+ [593.32615942,370.26273895],
+ [216.53402406,353.09046592],
+ [237.66341955, 43.72185898],
+ [635.34952928,271.76776472],
+ [319.34848297,442.74609846],
+ [437.05250348,240.6568742 ],
+ [218.39402061,184.43646207],
+ [231.75062017,186.18534917],
+ [477.16569797,551.46868377],
+ [362.68385904,672.8546694 ],
+ [543.29462678,310.53363915],
+ [292.18765118,455.20031338],
+ [275.67738239,224.60151936], [218.20782483,259.31882359], [594.5108387 ,396.2921338 ], [380.33927956,453.16229497], [496.42158514,513.60612942], [265.34807862,353.83548704], [341.99054572,488.9537246 ]]
+</p>
+        </div>
+    </div>
+
+    <h3>Mosaic Stitching</h3>
+    <p>Finding the homography using part B.4 and the matching feature points using part B.3 gives all the information needed to stitch two images together into a mosaic. Therefore, I followed the same steps I used in part A to stitch them together:</p>
+    <ul>
+        <li>Use the homography matrix to inverse warp image 1 into the image plane of image 2 using bilinear interpolation</li>
+        <li>Use 2-level laplacian stack blending to blend the warped image 1 with image 2</li>
+    </ul>
+    <p>Below are the results (and comparisons with manual stitching):</p>
+    <div class="image-gallery">
+        <div class="image-holder">
+            <h4>Mosaics of South Hall Building Images</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Automatic Stitching</b></p>
+                    <img class="image-large" src="media/partb/mosaic_finalbuilding_img1.jpeg"/>
+                    <p><b>Homography Matrix:</b> [[ 9.91953944e-01 -5.91995196e-02 -3.04022817e+02]
+ [ 5.65504849e-02  9.52643238e-01 -2.63420864e+01]
+ [-3.79470760e-18  1.12757026e-17  1.00000000e+00]]
+</p>
+</div>
+                <div class="compare">
+                    <p><b>Manual Stitching</b></p>
+                    <img class="image-large" src="media/partb/_manual_mosaic_finalbuilding_img1.jpeg"/>
+                    <p><b>Homography Matrix:</b> [[ 9.83347467e-01 -4.31968118e-02 -3.03007081e+02]
+ [ 1.13626447e-02  9.85380216e-01 -5.34724170e+00]
+ [ 0.00000000e+00  4.33680869e-19  1.00000000e+00]]</p>
+                    <p><b>Image 1 Points: </b>[514,263],[773,427],[907,553],[760,82],[569,201],[762,169],[501,460],[490,663],[781,609],[980,383],[972,717]</p>
+                    <p><b>Image 2 Points: </b>[189,249],[446,427],[563,548],[442,89],[248,189],[443,176],[165,454],[147,666],[450,604],[633,390],[621,701]</p>
+                
+                </div>
+            </div>
+            <h4>Mosaics of Valley Life Sciences Building Images</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Automatic Stitching</b></p>
+                    <img class="image-large" src="media/partb/mosaic_finalVLSB_img1.jpeg"/>
+                    <p><b>Homography Matrix:</b> [[ 1.00762522e+00 -6.40207911e-02 -3.43755343e+02]
+ [ 1.04875364e-02  9.87841684e-01  6.41269201e+00]
+ [-4.55364912e-18 -1.40946282e-18  1.00000000e+00]]
+</p>
+                </div>
+                <div class="compare">
+                    <p><b>Manual Stitching</b></p>
+                    <img class="image-large" src="media/partb/_manual_mosaic_finalVLSB_img1.jpeg"/>
+                    <p><b>Homography Matrix:</b> [[ 9.87373907e-01 -6.55171306e-02 -3.30214002e+02]
+ [ 3.18671609e-02  1.00079915e+00 -1.59724386e+01]
+ [-2.16840434e-19 -5.42101086e-20  1.00000000e+00]]</p>
+                    <p><b>Image 1 Points: </b>[606,559],[711,546],[839,532],[659,38],[708,114],[539,194],[819,233],[958,528],[805,678],[616,304],[457,641],[567,240]</p>
+                    <p><b>Image 2 Points: </b>[235,565],[342,553],[464,542],[316,45],[365,124],[186,185],[462,254],[573,541],[424,682],[262,305],[72,649],[214,238]</p>
+                </div>
+            </div>
+            <h4>Mosaics of Giannini Hall Images</h4>
+            <div class="side-by-side-container">
+                <div class="compare">
+                    <p><b>Automatic Stitching</b></p>
+                    <img class="image-large" src="media/partb/mosaic_finalgianini_img1.jpeg"/>
+                    <p><b>Homography Matrix:</b> [[ 9.56041186e-01 -2.79770420e-02 -2.75936180e+02]
+ [ 5.37062698e-02  9.96999320e-01 -4.60427790e+01]
+ [-3.90312782e-18  6.50521303e-19  1.00000000e+00]]
+</p>
+                </div>
+                <div class="compare">
+                    <p><b>Manual Stitching</b></p>
+                    <img class="image-large" src="media/partb/_manual_mosaic_finalgianini_img1.jpeg"/>
+                    <p><b>Homography Matrix:</b> [[ 1.00688486e+00 -5.39266775e-02 -3.06098559e+02]
+ [ 5.46128480e-02  1.01517321e+00 -5.06508111e+01]
+ [-6.50521303e-19 -8.67361738e-19  1.00000000e+00]]</p>
+                    <p><b>Image 1 Points: </b>[360,486],[583,536],[370,155],[433,148],[613,241],[779,289],[912,251],[941,484],[663,50],[676,423],[517,313]</p>
+                    <p><b>Image 2 Points: </b>[19,472],[262,527],[47,118],[119,117],[309,228],[467,290],[589,263],[603,479],[364,41],[363,413],[203,296]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p><i>My Observations: </i>I noticed that using automatic alignment improved the alignment a bit more, especially at the seam. Using automatic alignment on my mosaic of South Hall greatly improved the alignment. With RANSAC and automatic alignment, the mosaic looks like one singular image. Moreover, I noticed that the homography matrixes, were slightly different between the manual and automatic stitching methods. I also noticed that the automatic stitching algorithm used different points than what I chose to align the images. For example, I used the corners of the windows, doors and balconies for my Giannini Building mosaic, but my RANSAC algorithm selected points on the grass, and sides of the building. Overall, I think that automatic stitching is much more effective than manual, especially since it can select matching feature points with higher precision.</p>
 </body>
 </html>
